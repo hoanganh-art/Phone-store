@@ -1,0 +1,10 @@
+customers (1) ←---→ (n) invoices (1) ←---→ (n) invoice_details (n) ←---→ (1) products
+    ↑                                                            ↑
+    |                                                            |
+employees (1) ←---→ (n) invoices       brands (1) ←---→ (n) products
+    ↑                                                                
+    |                                                                
+employees (1) ←---→ (n) imports (1) ←---→ (n) import_details (n) ←---→ (1) products
+    ↑                                                            ↑
+    |                                                            |
+suppliers (1) ←---→ (n) imports                             products
