@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
-            $table->foreign('customer_id')->references('customer_id')->on('customers');
-            $table->unsignedBigInteger('employee_id');
-            $table->foreign('employee_id')->references('employee_id')->on('employees');
+            $table->foreignId('customer_id')->constrained('customers');
+            $table->foreignId('employee_id')->constrained('employees');
             $table->date('invoice_date'); //Ngày bán
             $table->decimal('subtotal', 12, 2); //Tổng tiền trả trước khi khuyến mãi
             $table->decimal('discount', 12, 2); //Tiền khuyến mãi

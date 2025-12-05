@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('import_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('import_id');
-            $table->foreign('import_id')->references('import_id')->on('imports');
-            $table->unsignedBigInteger('product_id');
-            $table->foreign('product_id')->references('product_id')->on('products');
+            $table->foreignId('import_id')->constrained('imports');
+            $table->foreignId('product_id')->constrained('products');
             $table->integer('quantity'); //Số lượng sản phẩm nhập
             $table->decimal('const_price', 12, 2); //Đơn giá nhập
             $table->decimal('amount', 12, 2); //Thành tiền

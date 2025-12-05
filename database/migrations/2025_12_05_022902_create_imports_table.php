@@ -13,10 +13,8 @@ return new class extends Migration
     {
         Schema::create('imports', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('supplier_id');
-            $table->foreign('supplier_id')->references('supplier_id')->on('suppliers');
-            $table->unsignedBigInteger('employee_id');
-            $table->foreign('employee_id')->references('employee_id')->on('employees');
+            $table->foreignId('supplier_id')->constrained('suppliers');
+            $table->foreignId('employee_id')->constrained('employees');
             $table->date('import_date'); //Ngày nhập hàng
             $table->decimal('total_amount', 12, 2); //Tổng tiền nhập hàng
             $table->text('notes')->nullable(); //Ghi chú
