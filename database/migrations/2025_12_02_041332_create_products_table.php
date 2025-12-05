@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('category',50); // Danh muc
             $table->decimal('price',12,2); //Giá bán
             $table->decimal('cost_price',12,2); //Giá nhập
-            $table->integer('stock');
-            $table->enum('status',[''])->default();
+            $table->integer('stock'); //Số lượng tồn kho
+            $table->enum('status',['Available', 'Out of Stock', 'Discontinued'])->default('Available');
             $table->timestamps();
         });
     }
