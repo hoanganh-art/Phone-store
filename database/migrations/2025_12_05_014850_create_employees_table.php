@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id();
+            $table->id('employees_id');
+            $table->string('username',50); //Tên đăng nhập
+            $table->string('password',255); //Mật khẩu
+            $table->string('full_name',255); //Họ và tên
+            $table->enum('role',['admin', 'employee']); //Vai trò
+            $table->decimal('salary', 12, 2); //Lương
+            $table->date('hire_date'); //Ngày vào làm
+            $table->string('email',100); //Email
+            $table->enum('status', ['active', 'inactive']); //Trạng thái
             $table->timestamps();
         });
     }
