@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('import_details', function (Blueprint $table) {
-            $table->id('import_details_id');
-            $table->foreignId('import_id')->constrained('imports'); //Liên kết khóa ngoại tới imports
-            $table->foreignId('product_id')->constrained('products'); //Liên kết khóa ngoại tới products
+            $table->id();
+            $table->unsignedBigInteger('import_id');
+            $table->foreign('import_id')->references('import_id')->on('imports');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('product_id')->on('products');
             $table->integer('quantity'); //Số lượng sản phẩm nhập
             $table->decimal('const_price', 12, 2); //Đơn giá nhập
             $table->decimal('amount', 12, 2); //Thành tiền

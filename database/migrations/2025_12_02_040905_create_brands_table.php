@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('brands', function (Blueprint $table) {
-            $table->id('brand_id');
+            $table->id();
             $table->string('brand_name', 50); // Tên thương hiệu
             $table->string('country', 50); // Quốc gia
             $table->text('description')->nullable(); // Mô tả

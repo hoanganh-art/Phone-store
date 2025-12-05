@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->id('employees_id');
+            $table->id();
             $table->string('username',50); //Tên đăng nhập
             $table->string('password',255); //Mật khẩu
             $table->string('full_name',255); //Họ và tên
