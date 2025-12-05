@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id('product_id'); //id sản phẩm
-            $table->string('product_name',100); //tên sản phẩm
-            $table->foreignId('brand_id')->constrained('brands')->onDelete('cacade'); // ID thương hiệu + khóa ngoại tới brands
-            $table->string('category',50); // Danh muc
-            $table->decimal('price',12,2); //Giá bán
-            $table->decimal('cost_price',12,2); //Giá nhập
-            $table->integer('stock'); //Số lượng tồn kho
-            $table->enum('status',['Available', 'Out of Stock', 'Discontinued'])->default('Available');
+            $table->id('product_id');
+            $table->string('product_name', 100);
+            $table->foreignId('brand_id')->constrained('brands');
+            $table->string('category', 50)->nullable();
+            $table->string('ram', 20)->nullable();
+            $table->string('storage', 20)->nullable();
+            $table->decimal('price', 12, 2)->default(0);
+            $table->decimal('cost_price', 12, 2)->default(0);
+            $table->integer('stock')->default(0);
+            $table->enum('status', ['Available', 'Out of Stock', 'Discontinued'])->default('Available');
             $table->timestamps();
         });
     }
