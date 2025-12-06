@@ -127,3 +127,8 @@ CREATE INDEX idx_import_details_import ON import_details(import_id);
 CREATE INDEX idx_import_details_product ON import_details(product_id);
 CREATE INDEX idx_customers_email ON customers(email);
 CREATE INDEX idx_employees_username ON employees(username);
+
+
+--Truy vấn dữ liệu
+
+
