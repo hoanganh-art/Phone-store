@@ -19,9 +19,7 @@ return new class extends Migration
             $table->string('email', 100)->unique(); // Email khách hàng
             $table->enum('gender', ['Nam', 'Nữ', 'Khác'])->nullable(); // Giới tính khách hàng
             $table->string('address', 255)->nullable(); // Địa chỉ khách hàng
-            $table->enum('membership', ['Active', 'Inactive'])->default('Active'); // Trạng thái khách hàng
-            $table->integer('some_integer_column'); // Example integer column
-            $table->enum('membership', ['Đồng', 'Bạc', 'Vàng','VIP'])->default('Đồng'); // Example enum column
+            $table->enum('membership', ['Đồng', 'Bạc', 'Vàng','VIP'])->default('Đồng'); // Cấp độ thành viên
             $table->integer('points')->default(0); // Điểm tích lũy
             $table->text('description')->nullable(); // Mô tả thêm về khách hàng(Ghi chú)
             $table->timestamps();
