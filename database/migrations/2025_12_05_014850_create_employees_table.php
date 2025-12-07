@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('username',50); //Tên đăng nhập
             $table->string('password',255); //Mật khẩu
             $table->string('full_name',255); //Họ và tên
+            $table->string('avartar',255)->nullable(); //Ảnh đại diện
+            $table->string('phone',15)->nullable(); //Số điện thoại
             $table->enum('role',['admin', 'employee']); //Vai trò
+            $table->enum('Position',['staff','Sell','Warehouse employee','Accountant']); //Chức vụ
             $table->decimal('salary', 12, 2); //Lương
             $table->date('hire_date'); //Ngày vào làm
             $table->string('email',100); //Email
-            $table->enum('status', ['active', 'inactive']); //Trạng thái
+            $table->enum('status', ['active', 'inactive', 'take a break']); //Trạng thái
             $table->timestamps();
         });
     }

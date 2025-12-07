@@ -15,10 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('full_name', 100); // Tên khách hàng
             $table->string('phone', 15)->unique(); // Số điện thoại khách hàng
+            $table->date('date_of_birth')->nullable(); // Ngày sinh khách hàng
             $table->string('email', 100)->unique(); // Email khách hàng
+            $table->enum('gender', ['Nam', 'Nữ', 'Khác'])->nullable(); // Giới tính khách hàng
             $table->string('address', 255)->nullable(); // Địa chỉ khách hàng
             $table->enum('membership', ['Active', 'Inactive'])->default('Active'); // Trạng thái khách hàng
             $table->integer('some_integer_column'); // Example integer column
+            $table->enum('membership', ['Đồng', 'Bạc', 'Vàng','VIP'])->default('Đồng'); // Example enum column
+            $table->integer('points')->default(0); // Điểm tích lũy
+            $table->text('description')->nullable(); // Mô tả thêm về khách hàng(Ghi chú)
             $table->timestamps();
         });
     }
