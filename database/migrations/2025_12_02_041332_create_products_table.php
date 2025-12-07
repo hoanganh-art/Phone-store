@@ -13,19 +13,19 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('product_name', 100);
-            $table->string('sku', 50)->unique();
-            $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade');
-            $table->string('category', 50);
-            $table->string('ram', 20)->nullable();
-            $table->string('storage', 20)->nullable();
-            $table->decimal('price', 12, 2);
-            $table->decimal('cost_price', 12, 2);
-            $table->integer('stock')->default(0);
-            $table->enum('status', ['Available', 'Out of Stock', 'Discontinued'])->default('Available');
-            $table->text('description')->nullable();
-            $table->string('image')->nullable();
-            $table->timestamps();
+            $table->string('product_name', 100); // Tên sản phẩmq
+            $table->string('sku', 50)->unique(); // Mã SKU sản phẩm
+            $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade'); // Thương hiệu sản phẩm
+            $table->string('category', 50); // Loại sản phẩm
+            $table->string('ram', 20)->nullable(); // RAM
+            $table->string('storage', 20)->nullable(); // Bộ nhớ trong
+            $table->decimal('price', 12, 2); // Giá bán
+            $table->decimal('cost_price', 12, 2); // Giá vốn
+            $table->integer('stock')->default(0); // Số lượng tồn kho
+            $table->enum('status', ['Available', 'Out of Stock', 'Discontinued'])->default('Available'); // Trạng thái sản phẩm
+            $table->text('description')->nullable(); // Mô tả sản phẩm
+            $table->string('image')->nullable(); // Hình ảnh sản phẩm
+            $table->timestamps(); // Thời gian tạo và cập nhật
         });
     }
 
