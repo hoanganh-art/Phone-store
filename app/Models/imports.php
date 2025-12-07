@@ -12,8 +12,7 @@ class imports extends Model
     //
     protected $table = " imports";
     protected $primaryKey = 'id';
-    protected $keyType = 'string'; // Vì id là VARCHAR
-    public $incrementing = false;
+    public $incrementing = true;
 
     protected $fillable = [
         'supplier_id',
