@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class brands extends Model
 {
     //
-    protected $table = "bands";
+    protected $table = "brands";
     protected $primaryKey = 'id';
     protected $fillable = [
         'brand_name',

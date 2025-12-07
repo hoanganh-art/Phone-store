@@ -15,6 +15,7 @@ class products extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'product_name',
+        'sku', // THÊM VÀO
         'brand_id',
         'category',
         'ram',
@@ -23,13 +24,16 @@ class products extends Model
         'cost_price',
         'stock',
         'status',
+        'description', // THÊM VÀO
+        'image', // THÊM VÀO
         'created_at'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'cost_price' => 'decimal:2',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
+        'stock' => 'integer'
     ];
 
     // Quan hệ: Sản phẩm thuộc về một thương hiệu
@@ -48,5 +52,4 @@ class products extends Model
     {
         return $this->hasMany(import_details::class, 'product_id');
     }
-
 }

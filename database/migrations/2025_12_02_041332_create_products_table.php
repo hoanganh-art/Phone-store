@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('product_name', 100);
+            $table->string('sku', 50)->unique();
             $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade');
             $table->string('category', 50);
             $table->string('ram', 20)->nullable();
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->decimal('cost_price', 12, 2);
             $table->integer('stock')->default(0);
             $table->enum('status', ['Available', 'Out of Stock', 'Discontinued'])->default('Available');
+            $table->text('description')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
