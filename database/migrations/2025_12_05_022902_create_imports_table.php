@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('imports', function (Blueprint $table) {
-            $table->string('id')->primary(); //Mã phiếu nhập
+            $table->id(); //Mã phiếu nhập
             $table->foreignId('supplier_id')->constrained('suppliers');
             $table->foreignId('employee_id')->constrained('employees');
             $table->date('import_date'); //Ngày nhập hàng

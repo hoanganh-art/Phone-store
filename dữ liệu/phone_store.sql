@@ -131,4 +131,4 @@ CREATE INDEX idx_employees_username ON employees(username);
 
 --Truy vấn dữ liệu
 
-
+DROP TABLE import_details;
