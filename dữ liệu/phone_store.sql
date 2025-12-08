@@ -131,4 +131,26 @@ CREATE INDEX idx_employees_username ON employees(username);
 
 --Truy vấn dữ liệu
 
-DROP TABLE import_details;
+-- Nếu muốn xóa dữ liệu cũ trong import_details thì dùng TRUNCATE thay vì DROP TABLE
+TRUNCATE TABLE import_details;
+
+-- Tạo dữ liệu products mẫu
+INSERT INTO brands (brand_name, country, description) VALUES
+('Apple', 'USA', 'Premium smartphone manufacturer'),
+('Samsung', 'South Korea', 'Leading electronics company'),
+('Xiaomi', 'China', 'Affordable tech innovator'),
+('Oppo', 'China', 'Camera-focused smartphones'),
+('Vivo', 'China', 'Innovation-driven brand');
+
+use phone_store;
+INSERT INTO products (product_name, sku, brand_id, category, ram, storage, price, cost_price, stock, status, description, image) VALUES
+('iPhone 15 Pro', 'IP15P-256', 1, 'Flagship', '8GB', '256GB', 999.99, 650.00, 50, 'Available', 'iPhone 15 Pro với chip A17 Pro', 'iphone15pro.jpg'),
+('iPhone 15', 'IP15-128', 1, 'Flagship', '6GB', '128GB', 799.99, 520.00, 45, 'Available', 'iPhone 15 tiêu chuẩn', 'iphone15.jpg'),
+('Galaxy S24 Ultra', 'GS24U-512', 2, 'Flagship', '12GB', '512GB', 1299.99, 850.00, 30, 'Available', 'Samsung Galaxy S24 Ultra', 's24ultra.jpg'),
+('Galaxy A54', 'GA54-256', 2, 'Mid-range', '8GB', '256GB', 449.99, 280.00, 60, 'Available', 'Samsung Galaxy A54', 'galaxya54.jpg'),
+('Xiaomi 14', 'XM14-512', 3, 'Flagship', '12GB', '512GB', 699.99, 420.00, 40, 'Available', 'Xiaomi 14 flagship', 'xiaomi14.jpg'),
+('Redmi Note 13', 'RMN13-128', 3, 'Budget', '4GB', '128GB', 199.99, 110.00, 100, 'Available', 'Redmi Note 13 giá rẻ', 'redminote13.jpg'),
+('Oppo Find X6', 'OFX6-256', 4, 'Flagship', '12GB', '256GB', 899.99, 550.00, 25, 'Available', 'Oppo Find X6 flagship', 'oppofindx6.jpg'),
+('Oppo A78', 'OA78-128', 4, 'Budget', '6GB', '128GB', 249.99, 140.00, 80, 'Available', 'Oppo A78 giá rẻ', 'oppoa78.jpg'),
+('Vivo X90', 'VX90-512', 5, 'Flagship', '12GB', '512GB', 799.99, 480.00, 35, 'Available', 'Vivo X90 cao cấp', 'vivox90.jpg'),
+('Vivo Y36', 'VY36-128', 5, 'Budget', '4GB', '128GB', 179.99, 95.00, 120, 'Available', 'Vivo Y36 giá rẻ', 'vivoy36.jpg');

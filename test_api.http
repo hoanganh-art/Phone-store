@@ -1,0 +1,17 @@
+### Test thêm product qua API
+POST http://localhost:8000/api/products
+Content-Type: application/json
+
+{
+    "product_name": "iPhone 15",
+    "brand_id": 1,
+    "category": "Flagship",
+    "ram": "6GB",
+    "storage": "128GB",
+    "price": 799.99,
+    "cost_price": 520.00,
+    "stock": 45,
+    "status": "Available",
+    "description": "Latest iPhone model",
+    "image": "https://example.com/iphone15.jpg"
+}
