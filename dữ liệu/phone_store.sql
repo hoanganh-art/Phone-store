@@ -134,6 +134,7 @@ CREATE INDEX idx_employees_username ON employees(username);
 -- Nếu muốn xóa dữ liệu cũ trong import_details thì dùng TRUNCATE thay vì DROP TABLE
 TRUNCATE TABLE import_details;
 
+use phone_store;
 -- Tạo dữ liệu products mẫu
 INSERT INTO brands (brand_name, country, description) VALUES
 ('Apple', 'USA', 'Premium smartphone manufacturer'),
