@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('price', 12, 2); // Giá bán
             $table->decimal('cost_price', 12, 2); // Giá vốn
             $table->integer('stock')->default(0); // Số lượng tồn kho
-            $table->enum('status', ['active', 'inactive', 'draft'])->default('active'); // Trạng thái sản phẩm
+            $table->enum('status', ['Available', 'Out of Stock', 'Discontinued'])->default('Available'); // Trạng thái sản phẩm
             $table->text('description')->nullable(); // Mô tả sản phẩm
             $table->string('image')->nullable(); // Hình ảnh sản phẩm
             $table->timestamps(); // Thời gian tạo và cập nhật
