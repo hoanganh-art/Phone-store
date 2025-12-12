@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
+use App\Models\Products;
 use App\Models\brands;
-use App\Models\products;
 use App\Models\invoice_details;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
