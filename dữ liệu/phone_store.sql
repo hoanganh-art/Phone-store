@@ -144,14 +144,47 @@ INSERT INTO brands (brand_name, country, description) VALUES
 ('Vivo', 'China', 'Innovation-driven brand');
 
 use phone_store;
-INSERT INTO products (product_name, sku, brand_id, category, ram, storage, price, cost_price, stock, status, description, image) VALUES
-('iPhone 15 Pro', 'IP15P-256', 1, 'Flagship', '8GB', '256GB', 999.99, 650.00, 50, 'Available', 'iPhone 15 Pro với chip A17 Pro', 'iphone15pro.jpg'),
-('iPhone 15', 'IP15-128', 1, 'Flagship', '6GB', '128GB', 799.99, 520.00, 45, 'Available', 'iPhone 15 tiêu chuẩn', 'iphone15.jpg'),
-('Galaxy S24 Ultra', 'GS24U-512', 2, 'Flagship', '12GB', '512GB', 1299.99, 850.00, 30, 'Available', 'Samsung Galaxy S24 Ultra', 's24ultra.jpg'),
-('Galaxy A54', 'GA54-256', 2, 'Mid-range', '8GB', '256GB', 449.99, 280.00, 60, 'Available', 'Samsung Galaxy A54', 'galaxya54.jpg'),
-('Xiaomi 14', 'XM14-512', 3, 'Flagship', '12GB', '512GB', 699.99, 420.00, 40, 'Available', 'Xiaomi 14 flagship', 'xiaomi14.jpg'),
-('Redmi Note 13', 'RMN13-128', 3, 'Budget', '4GB', '128GB', 199.99, 110.00, 100, 'Available', 'Redmi Note 13 giá rẻ', 'redminote13.jpg'),
-('Oppo Find X6', 'OFX6-256', 4, 'Flagship', '12GB', '256GB', 899.99, 550.00, 25, 'Available', 'Oppo Find X6 flagship', 'oppofindx6.jpg'),
-('Oppo A78', 'OA78-128', 4, 'Budget', '6GB', '128GB', 249.99, 140.00, 80, 'Available', 'Oppo A78 giá rẻ', 'oppoa78.jpg'),
-('Vivo X90', 'VX90-512', 5, 'Flagship', '12GB', '512GB', 799.99, 480.00, 35, 'Available', 'Vivo X90 cao cấp', 'vivox90.jpg'),
-('Vivo Y36', 'VY36-128', 5, 'Budget', '4GB', '128GB', 179.99, 95.00, 120, 'Available', 'Vivo Y36 giá rẻ', 'vivoy36.jpg');
+INSERT INTO products (product_name, brand_id, category, ram, storage, price, cost_price, stock, status) VALUES
+('iPhone 15 Pro', 1, 'Flagship', '8GB', '256GB', 999.99, 650.00, 50, 'Available'),
+('iPhone 15', 1, 'Flagship', '6GB', '128GB', 799.99, 520.00, 45, 'Available'),
+('Galaxy S24 Ultra', 2, 'Flagship', '12GB', '512GB', 1299.99, 850.00, 30, 'Available'),
+('Galaxy A54', 2, 'Mid-range', '8GB', '256GB', 449.99, 280.00, 60, 'Available'),
+('Xiaomi 14', 3, 'Flagship', '12GB', '512GB', 699.99, 420.00, 40, 'Available'),
+('Redmi Note 13', 3, 'Budget', '4GB', '128GB', 199.99, 110.00, 100, 'Available'),
+('Oppo Find X6', 4, 'Flagship', '12GB', '256GB', 899.99, 550.00, 25, 'Available'),
+('Oppo A78', 4, 'Budget', '6GB', '128GB', 249.99, 140.00, 80, 'Available'),
+('Vivo X90', 5, 'Flagship', '12GB', '512GB', 799.99, 480.00, 35, 'Available'),
+('Vivo Y36', 5, 'Budget', '4GB', '128GB', 179.99, 95.00, 120, 'Available');
+
+
+--Tạo dữ liệu mẫu Đơn hàng khách mua (invoices) và Chi tiết đơn hàng (invoice_details)
+-- Tạo dữ liệu mẫu employees
+INSERT INTO employees (username, password, full_name, role, phone, salary, hire_date, status) VALUES
+('admin', 'admin123', 'Nguyễn Văn Admin', 'Admin', '0900000001', 15000000.00, '2023-01-01', 'Active'),
+('manager1', 'manager123', 'Trần Thị Manager', 'Manager', '0900000002', 12000000.00, '2023-02-01', 'Active'),
+('sales1', 'sales123', 'Lê Văn Sales', 'Sales', '0900000003', 8000000.00, '2023-03-01', 'Active');
+
+-- Tạo dữ liệu mẫu customers
+INSERT INTO customers (full_name, phone, email, address, membership, points) VALUES
+('Nguyễn Văn A', '0901234567', 'nguyenvana@email.com', '123 Đường Lê Lợi, TP.HCM', 'Gold', 500),
+('Trần Thị B', '0912345678', 'tranthib@email.com', '456 Đường Nguyễn Huệ, TP.HCM', 'Silver', 300),
+('Phạm Văn C', '0923456789', 'phamvanc@email.com', '789 Đường Trần Hưng Đạo, Hà Nội', 'Standard', 100),
+('Lê Thị D', '0934567890', 'lethid@email.com', '321 Đường Cách Mạng Tháng 8, TP.HCM', 'Platinum', 1000),
+('Hoàng Văn E', '0945678901', 'hoangvane@email.com', '654 Đường Võ Văn Kiệt, TP.HCM', 'Standard', 50);
+
+-- Tạo dữ liệu mẫu invoices
+INSERT INTO invoices (invoice_id, customer_id, employee_id, invoice_date, subtotal, discount, total_amount, payment_method, status) VALUES
+('INV001', 1, 1, '2024-01-15 10:30:00', 1999.98, 100.00, 1899.98, 'Credit Card', 'Paid'),
+('INV002', 2, 2, '2024-01-16 14:20:00', 699.99, 50.00, 649.99, 'Cash', 'Paid'),
+('INV003', 3, 1, '2024-01-17 09:15:00', 1299.99, 0.00, 1299.99, 'Bank Transfer', 'Paid'),
+('INV004', 4, 3, '2024-01-18 16:45:00', 449.99, 0.00, 449.99, 'E-Wallet', 'Paid'),
+('INV005', 5, 2, '2024-01-19 11:00:00', 999.97, 150.00, 849.97, 'Credit Card', 'Pending');
+-- Tạo dữ liệu mẫu invoice_details
+INSERT INTO invoice_details (invoice_id, product_id, quantity, unit_price, amount) VALUES
+('INV001', 1, 1, 999.99, 999.99),
+('INV001', 3, 1, 999.99, 999.99),
+('INV002', 5, 1, 699.99, 699.99),
+('INV003', 3, 1, 1299.99, 1299.99),
+('INV004', 4, 1, 449.99, 449.99),
+('INV005', 2, 1, 799.99, 799.99),
+('INV005', 6, 1, 199.99, 199.99);
