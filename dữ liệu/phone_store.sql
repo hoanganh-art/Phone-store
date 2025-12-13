@@ -173,14 +173,16 @@ INSERT INTO customers (full_name, phone, email, address, membership, points) VAL
 ('Hoàng Văn E', '0945678901', 'hoangvane@email.com', '654 Đường Võ Văn Kiệt, TP.HCM', 'Standard', 50);
 
 -- Tạo dữ liệu mẫu invoices
-INSERT INTO invoices (invoice_id, customer_id, employee_id, invoice_date, subtotal, discount, total_amount, payment_method, status) VALUES
+SELECT * FROM invoices;
+
+INSERT INTO invoices (id, customer_id, employee_id, invoice_date, subtotal, discount, total_amount, payment_method, status) VALUES
 ('INV001', 1, 1, '2024-01-15 10:30:00', 1999.98, 100.00, 1899.98, 'Credit Card', 'Paid'),
 ('INV002', 2, 2, '2024-01-16 14:20:00', 699.99, 50.00, 649.99, 'Cash', 'Paid'),
 ('INV003', 3, 1, '2024-01-17 09:15:00', 1299.99, 0.00, 1299.99, 'Bank Transfer', 'Paid'),
 ('INV004', 4, 3, '2024-01-18 16:45:00', 449.99, 0.00, 449.99, 'E-Wallet', 'Paid'),
 ('INV005', 5, 2, '2024-01-19 11:00:00', 999.97, 150.00, 849.97, 'Credit Card', 'Pending');
 -- Tạo dữ liệu mẫu invoice_details
-INSERT INTO invoice_details (invoice_id, product_id, quantity, unit_price, amount) VALUES
+INSERT INTO invoice_details (id, product_id, quantity, unit_price, amount) VALUES
 ('INV001', 1, 1, 999.99, 999.99),
 ('INV001', 3, 1, 999.99, 999.99),
 ('INV002', 5, 1, 699.99, 699.99),
