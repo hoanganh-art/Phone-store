@@ -140,7 +140,7 @@ class ProductsController extends Controller
                 'image' => 'nullable|url|max:255',
             ]);
 
-            
+
 
             if ($validator->fails()) {
                 return response()->json([
@@ -152,7 +152,6 @@ class ProductsController extends Controller
 
             $sku = $request->sku ?: $this->generateSKU($request->brand_id, $request->category);
 
-            // Sử dụng URL từ request hoặc ảnh mặc định
             $imageUrl = $request->image ?: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop';
 
             $product = products::create([
