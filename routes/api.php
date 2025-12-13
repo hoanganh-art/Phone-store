@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductsController;
+use App\Http\Controllers\InvoicesController;
 
 // ========== ROUTE CHÍNH ==========
 Route::get('/', function () {
@@ -11,6 +12,7 @@ Route::get('/', function () {
         'status' => 'online',
         'endpoints' => [
             'products' => '/api/products',
+            'orders' => '/api/orders',
             'stats' => '/api/products/stats',
             'filter_options' => '/api/products/filter-options',
             'brands' => '/api/products/brands',
@@ -31,4 +33,16 @@ Route::prefix('products')->group(function () {
     Route::get('/{id}', [ProductsController::class, 'show']);
     Route::put('/{id}', [ProductsController::class, 'update']);
     Route::delete('/{id}', [ProductsController::class, 'destroy']);
+});
+
+
+// ========== ROUTE ORDERS (INVOICES) ==========
+Route::prefix('orders')->group(function () {
+    Route::get('/', [InvoicesController::class, 'index']);          // Lấy danh sách đơn hàng
+    Route::get('/stats', [InvoicesController::class, 'stats']);     // Lấy thống kê
+    Route::get('/{id}', [InvoicesController::class, 'show']);       // Lấy chi tiết 1 đơn hàng
+    Route::post('/', [InvoicesController::class, 'store']);         // Tạo đơn hàng mới
+    Route::put('/{id}', [InvoicesController::class, 'update']);     // Cập nhật đơn hàng
+    Route::delete('/{id}', [InvoicesController::class, 'destroy']); // Xóa đơn hàng
+    Route::put('/{id}/status', [InvoicesController::class, 'updateStatus']); // Cập nhật trạng thái
 });
