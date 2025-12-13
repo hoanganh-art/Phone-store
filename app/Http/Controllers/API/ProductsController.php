@@ -136,8 +136,11 @@ class ProductsController extends Controller
                 'stock' => 'required|integer|min:0',
                 'status' => 'required|in:Available,Out of Stock,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|string', // Đổi từ url thành string
+                'image' => 'nullable|url|max:255',
             ]);
+
+            //Xử lý hình ảnh
+
 
             if ($validator->fails()) {
                 return response()->json([
@@ -216,8 +219,6 @@ class ProductsController extends Controller
                     'errors' => $validator->errors(),
                 ], 422);
             }
-
-            // Cập nhật từng trường thay vì dùng update($request->all())
             $updateData = $request->only([
                 'product_name', 'brand_id', 'category', 'ram', 'storage',
                 'price', 'cost_price', 'stock', 'status', 'description', 'image'
