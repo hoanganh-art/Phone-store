@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\invoices;        // Model cho bảng invoicess
-use App\Models\invoicesDetail;  // Model cho bảng invoices_details
+use App\Models\invoices;        // Model cho bảng invoices
+use App\Models\invoice_details;  // Model cho bảng invoice_details
 use App\Models\Customer;       // Model cho khách hàng
 use App\Models\Employee;       // Model cho nhân viên
-use App\Models\invoicess;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;            // Xử lý ngày tháng
@@ -21,7 +20,7 @@ class invoicesController extends Controller
     {
         try {
             // Bắt đầu query với các quan hệ
-            $query = invoices::with(['customer', 'employee', 'invoicesDetails.product'])
+            $query = invoices::with(['customer', 'employee', 'invoiceDetails.product'])
                 ->orderBy('created_at', 'desc');  // Sắp xếp mới nhất trước
 
             // 🔍 LỌC THEO TRẠNG THÁI
@@ -36,10 +35,10 @@ class invoicesController extends Controller
 
             // 📅 LỌC THEO KHOẢNG THỜI GIAN
             if ($request->has('start_date')) {
-                $query->whereDate('invoices_date', '>=', $request->start_date);
+                $query->whereDate('invoice_date', '>=', $request->start_date);
             }
             if ($request->has('end_date')) {
-                $query->whereDate('invoices_date', '<=', $request->end_date);
+                $query->whereDate('invoice_date', '<=', $request->end_date);
             }
 
             // 👤 LỌC THEO KHÁCH HÀNG
@@ -78,10 +77,10 @@ class invoicesController extends Controller
                         'id' => $invoices->employee->id,
                         'name' => $invoices->employee->name,
                     ],
-                    'invoices_date' => $invoices->invoices_date,
-                    'created_at' => $invoices->created_at->format('d/m/Y H:i'),
-                    'items_count' => $invoices->invoicesDetails->count(),  // Số lượng sản phẩm
-                    'products' => $invoices->invoicesDetails->map(function($detail) {
+                    'invoice_date' => $invoices->invoice_date,
+                    'created_at' => $invoices->created_at?->format('d/m/Y H:i'),
+                    'items_count' => $invoices->invoiceDetails->count(),  // Số lượng sản phẩm
+                    'products' => $invoices->invoiceDetails->map(function($detail) {
                         return [
                             'name' => $detail->product->name,
                             'quantity' => $detail->quantity,
@@ -142,11 +141,11 @@ class invoicesController extends Controller
                 'cancelled' => invoices::where('status', 'cancelled')->count(),
 
                 // Thống kê theo tháng
-                'monthly_total' => invoices::whereBetween('invoices_date', [$startDate, $endDate])->count(),
-                'monthly_revenue' => invoices::whereBetween('invoices_date', [$startDate, $endDate])->sum('total_amount'),
-                'monthly_pending' => invoices::whereBetween('invoices_date', [$startDate, $endDate])
+                'monthly_total' => invoices::whereBetween('invoice_date', [$startDate, $endDate])->count(),
+                'monthly_revenue' => invoices::whereBetween('invoice_date', [$startDate, $endDate])->sum('total_amount'),
+                'monthly_pending' => invoices::whereBetween('invoice_date', [$startDate, $endDate])
                     ->where('status', 'pending')->count(),
-                'monthly_processing' => invoices::whereBetween('invoices_date', [$startDate, $endDate])
+                'monthly_processing' => invoices::whereBetween('invoice_date', [$startDate, $endDate])
                     ->where('status', 'processing')->count(),
             ];
 
@@ -170,7 +169,7 @@ class invoicesController extends Controller
     {
         try {
             // Lấy đơn hàng với tất cả quan hệ
-            $invoices = invoices::with(['customer', 'employee', 'invoicesDetails.product'])
+            $invoices = invoices::with(['customer', 'employee', 'invoiceDetails.product'])
                 ->findOrFail($id);  // Tìm hoặc báo lỗi 404
 
             $formattedinvoices = [
@@ -189,9 +188,9 @@ class invoicesController extends Controller
                     'phone' => $invoices->employee->phone,
                     'email' => $invoices->employee->email,
                 ],
-                'invoices_date' => $invoices->invoices_date,
-                'created_at' => $invoices->created_at->format('d/m/Y H:i:s'),
-                'items' => $invoices->invoicesDetails->map(function($detail) {
+                'invoice_date' => $invoices->invoice_date,
+                'created_at' => $invoices->created_at?->format('d/m/Y H:i:s'),
+                'items' => $invoices->invoiceDetails->map(function($detail) {
                     return [
                         'product_id' => $detail->product_id,
                         'product_name' => $detail->product->name,
