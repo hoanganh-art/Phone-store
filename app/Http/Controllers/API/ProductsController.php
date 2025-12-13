@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Products;
 use App\Models\brands;
 use App\Models\invoice_details;
+use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
@@ -89,12 +90,12 @@ class ProductsController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $products,
-                'message' => 'Lấy danh sách sản phẩm thành công'
+                'message' => 'Lấy danh sách sản phẩm thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -107,22 +108,22 @@ class ProductsController extends Controller
         try {
             $product = products::with('brand')->find($id);
 
-            if (!$product) {
+            if (! $product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm'
+                    'message' => 'Không tìm thấy sản phẩm',
                 ], 404);
             }
 
             return response()->json([
                 'success' => true,
                 'data' => $product,
-                'message' => 'Lấy thông tin sản phẩm thành công'
+                'message' => 'Lấy thông tin sản phẩm thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -142,16 +143,16 @@ class ProductsController extends Controller
                 'price' => 'required|numeric|min:0',
                 'cost_price' => 'required|numeric|min:0',
                 'stock' => 'required|integer|min:0',
-                'status' => 'required|in:Available,Out of Stock,Coming Soon,Discontinued',
+                'status' => 'required|in:Available,Out of Stock,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|url'
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -170,18 +171,26 @@ class ProductsController extends Controller
                 'stock' => $request->stock,
                 'status' => $request->status,
                 'description' => $request->description,
-                'image' => $request->image ?? 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop'
+                'image' => $request->image ?? 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop',
             ]);
+
+            // xử lý hình ảnh
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time().'_'.$image->getClientOriginalName();
+                $imagePath = $image->storeAs('products', $imageName, 'public');
+            }
 
             return response()->json([
                 'success' => true,
                 'data' => $product->load('brand'),
-                'message' => 'Tạo sản phẩm mới thành công'
+                'message' => 'Tạo sản phẩm mới thành công',
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -194,10 +203,10 @@ class ProductsController extends Controller
         try {
             $product = products::find($id);
 
-            if (!$product) {
+            if (! $product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm'
+                    'message' => 'Không tìm thấy sản phẩm',
                 ], 404);
             }
 
@@ -212,14 +221,23 @@ class ProductsController extends Controller
                 'stock' => 'integer|min:0',
                 'status' => 'in:Available,Out of Stock,Coming Soon,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|url'
+                'image' => 'nullable|url',
             ]);
 
+            // Xử lý upload ảnh mới (nếu có)
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time().'_'.$image->getClientOriginalName();
+                $imagePath = $image->storeAs('products', $imageName, 'public');
+
+                // Cập nhật đường dẫn ảnh
+                $product->image = Storage::url($imagePath);
+            }
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
 
@@ -228,12 +246,12 @@ class ProductsController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $product->load('brand'),
-                'message' => 'Cập nhật sản phẩm thành công'
+                'message' => 'Cập nhật sản phẩm thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -246,10 +264,10 @@ class ProductsController extends Controller
         try {
             $product = products::find($id);
 
-            if (!$product) {
+            if (! $product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không tìm thấy sản phẩm'
+                    'message' => 'Không tìm thấy sản phẩm',
                 ], 404);
             }
 
@@ -259,7 +277,7 @@ class ProductsController extends Controller
             if ($hasInvoices) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Không thể xóa sản phẩm vì đã có trong hóa đơn'
+                    'message' => 'Không thể xóa sản phẩm vì đã có trong hóa đơn',
                 ], 400);
             }
 
@@ -267,12 +285,12 @@ class ProductsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Xóa sản phẩm thành công'
+                'message' => 'Xóa sản phẩm thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -291,17 +309,18 @@ class ProductsController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'total' => $total,
-                    'available' => $available,
-                    'out_of_stock' => $outOfStock,
-                    'low_stock' => $lowStock
+                    'total' => products::count(),
+                    'available' => products::where('stock', '>', 5)->count(), // Còn hàng
+                    'low_stock' => products::where('stock', '>', 0)
+                        ->where('stock', '<=', 5)->count(), // Sắp hết
+                    'out_of_stock' => products::where('stock', '=', 0)->count(), // Hết hàng
                 ],
-                'message' => 'Lấy thống kê thành công'
+                'message' => 'Lấy thống kê thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -317,12 +336,12 @@ class ProductsController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $brands,
-                'message' => 'Lấy danh sách thương hiệu thành công'
+                'message' => 'Lấy danh sách thương hiệu thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -338,12 +357,12 @@ class ProductsController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $categories,
-                'message' => 'Lấy danh sách danh mục thành công'
+                'message' => 'Lấy danh sách danh mục thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -375,7 +394,7 @@ class ProductsController extends Controller
         $timestamp = time();
         $random = rand(100, 999);
 
-        return $brandPrefix . $categoryPrefix . $timestamp . $random;
+        return $brandPrefix.$categoryPrefix.$timestamp.$random;
     }
 
     /**
@@ -390,12 +409,12 @@ class ProductsController extends Controller
                 ['value' => 'low', 'label' => 'Dưới 5 triệu'],
                 ['value' => 'medium', 'label' => '5 - 15 triệu'],
                 ['value' => 'high', 'label' => '15 - 30 triệu'],
-                ['value' => 'premium', 'label' => 'Trên 30 triệu']
+                ['value' => 'premium', 'label' => 'Trên 30 triệu'],
             ];
             $stockStatuses = [
                 ['value' => 'in-stock', 'label' => 'Còn hàng'],
                 ['value' => 'low-stock', 'label' => 'Sắp hết'],
-                ['value' => 'out-of-stock', 'label' => 'Hết hàng']
+                ['value' => 'out-of-stock', 'label' => 'Hết hàng'],
             ];
 
             return response()->json([
@@ -404,14 +423,14 @@ class ProductsController extends Controller
                     'categories' => $categories,
                     'statuses' => $statuses,
                     'price_ranges' => $priceRanges,
-                    'stock_statuses' => $stockStatuses
+                    'stock_statuses' => $stockStatuses,
                 ],
-                'message' => 'Lấy tùy chọn lọc thành công'
+                'message' => 'Lấy tùy chọn lọc thành công',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi server: ' . $e->getMessage()
+                'message' => 'Lỗi server: '.$e->getMessage(),
             ], 500);
         }
     }
