@@ -169,6 +169,7 @@ class ProductsController extends Controller
                 'image' => $imageUrl,
             ]);
 
+            
             return response()->json([
                 'success' => true,
                 'data' => $product->load('brand'),
@@ -208,7 +209,7 @@ class ProductsController extends Controller
                 'stock' => 'nullable|integer|min:0',
                 'status' => 'nullable|in:Available,Out of Stock,Coming Soon,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|url|max:255', // Thêm max:255
+                'image' => 'nullable|url|max:255',
             ]);
 
             if ($validator->fails()) {
