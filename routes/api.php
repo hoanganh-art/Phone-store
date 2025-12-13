@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductsController;
-use App\Http\Controllers\InvoicesController;
+use App\Http\Controllers\API\InvoicesController;
+
 
 // ========== ROUTE CHÍNH ==========
 Route::get('/', function () {
