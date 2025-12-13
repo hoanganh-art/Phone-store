@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+
 use App\Http\Controllers\Controller;
 use App\Models\brands;
 use App\Models\invoice_details;
@@ -139,8 +140,7 @@ class ProductsController extends Controller
                 'image' => 'nullable|url|max:255',
             ]);
 
-            //Xử lý hình ảnh
-
+            
 
             if ($validator->fails()) {
                 return response()->json([
@@ -221,7 +221,7 @@ class ProductsController extends Controller
             }
             $updateData = $request->only([
                 'product_name', 'brand_id', 'category', 'ram', 'storage',
-                'price', 'cost_price', 'stock', 'status', 'description', 'image'
+                'price', 'cost_price', 'stock', 'status', 'description', 'image',
             ]);
 
             $product->update($updateData);
