@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
 use App\Http\Controllers\Controller;
 use App\Models\brands;
 use App\Models\invoice_details;
@@ -18,19 +17,16 @@ class ProductsController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = products::query()->with('brand'); // Thêm with('brand')
+            $query = products::query()->with('brand');
 
-            // Lọc theo danh mục
             if ($request->has('category') && $request->category != '') {
                 $query->where('category', $request->category);
             }
 
-            // Lọc theo thương hiệu (brand_id)
             if ($request->has('brand_id') && $request->brand_id != '') {
                 $query->where('brand_id', $request->brand_id);
             }
 
-            // Lọc theo trạng thái kho - SỬA THEO SCHEMA
             if ($request->has('stock_status') && $request->stock_status != '') {
                 switch ($request->stock_status) {
                     case 'in-stock':
@@ -39,18 +35,16 @@ class ProductsController extends Controller
                     case 'out-of-stock':
                         $query->where('stock', 0);
                         break;
-                    case 'low-stock': // THÊM
+                    case 'low-stock':
                         $query->where('stock', '<', 10)->where('stock', '>', 0);
                         break;
                 }
             }
 
-            // Lọc theo trạng thái sản phẩm - THÊM
             if ($request->has('status') && $request->status != '') {
                 $query->where('status', $request->status);
             }
 
-            // Lọc theo giá
             if ($request->has('price_range') && $request->price_range != '') {
                 switch ($request->price_range) {
                     case 'low':
@@ -68,22 +62,19 @@ class ProductsController extends Controller
                 }
             }
 
-            // Tìm kiếm
             if ($request->has('search') && $request->search != '') {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('product_name', 'like', "%{$search}%")
-                        ->orWhere('sku', 'like', "%{$search}%") // THÊM
+                        ->orWhere('sku', 'like', "%{$search}%")
                         ->orWhere('ram', 'like', "%{$search}%")
                         ->orWhere('storage', 'like', "%{$search}%")
                         ->orWhere('description', 'like', "%{$search}%");
                 });
             }
 
-            // Sắp xếp mặc định
             $query->orderBy('created_at', 'desc');
 
-            // Phân trang
             $perPage = $request->has('per_page') ? $request->per_page : 12;
             $products = $query->paginate($perPage);
 
@@ -145,7 +136,7 @@ class ProductsController extends Controller
                 'stock' => 'required|integer|min:0',
                 'status' => 'required|in:Available,Out of Stock,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+                'image' => 'nullable|string', // Đổi từ url thành string
             ]);
 
             if ($validator->fails()) {
@@ -156,8 +147,10 @@ class ProductsController extends Controller
                 ], 422);
             }
 
-            // Tạo SKU tự động nếu không có
             $sku = $request->sku ?: $this->generateSKU($request->brand_id, $request->category);
+
+            // Sử dụng URL từ request hoặc ảnh mặc định
+            $imageUrl = $request->image ?: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop';
 
             $product = products::create([
                 'product_name' => $request->product_name,
@@ -171,16 +164,8 @@ class ProductsController extends Controller
                 'stock' => $request->stock,
                 'status' => $request->status,
                 'description' => $request->description,
-                'image' => $request->image ?? 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&h=400&fit=crop',
+                'image' => $imageUrl,
             ]);
-
-            // xử lý hình ảnh
-            $imagePath = null;
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time().'_'.$image->getClientOriginalName();
-                $imagePath = $image->storeAs('products', $imageName, 'public');
-            }
 
             return response()->json([
                 'success' => true,
@@ -211,28 +196,19 @@ class ProductsController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'product_name' => 'string|max:100',
-                'brand_id' => 'integer|exists:brands,id',
-                'category' => 'string|max:50',
+                'product_name' => 'nullable|string|max:100',
+                'brand_id' => 'nullable|integer|exists:brands,id',
+                'category' => 'nullable|string|max:50',
                 'ram' => 'nullable|string|max:20',
                 'storage' => 'nullable|string|max:20',
-                'price' => 'numeric|min:0',
-                'cost_price' => 'numeric|min:0',
-                'stock' => 'integer|min:0',
-                'status' => 'in:Available,Out of Stock,Coming Soon,Discontinued',
+                'price' => 'nullable|numeric|min:0',
+                'cost_price' => 'nullable|numeric|min:0',
+                'stock' => 'nullable|integer|min:0',
+                'status' => 'nullable|in:Available,Out of Stock,Coming Soon,Discontinued',
                 'description' => 'nullable|string',
-                'image' => 'nullable|url',
+                'image' => 'nullable|url|max:255', // Thêm max:255
             ]);
 
-            // Xử lý upload ảnh mới (nếu có)
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time().'_'.$image->getClientOriginalName();
-                $imagePath = $image->storeAs('products', $imageName, 'public');
-
-                // Cập nhật đường dẫn ảnh
-                $product->image = Storage::url($imagePath);
-            }
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
@@ -241,7 +217,13 @@ class ProductsController extends Controller
                 ], 422);
             }
 
-            $product->update($request->all());
+            // Cập nhật từng trường thay vì dùng update($request->all())
+            $updateData = $request->only([
+                'product_name', 'brand_id', 'category', 'ram', 'storage',
+                'price', 'cost_price', 'stock', 'status', 'description', 'image'
+            ]);
+
+            $product->update($updateData);
 
             return response()->json([
                 'success' => true,
@@ -301,19 +283,13 @@ class ProductsController extends Controller
     public function stats()
     {
         try {
-            $total = products::count();
-            $available = products::where('status', 'Available')->count();
-            $outOfStock = products::where('status', 'Out of Stock')->count();
-            $lowStock = products::where('stock', '<', 10)->where('stock', '>', 0)->count();
-
             return response()->json([
                 'success' => true,
                 'data' => [
                     'total' => products::count(),
-                    'available' => products::where('stock', '>', 5)->count(), // Còn hàng
-                    'low_stock' => products::where('stock', '>', 0)
-                        ->where('stock', '<=', 5)->count(), // Sắp hết
-                    'out_of_stock' => products::where('stock', '=', 0)->count(), // Hết hàng
+                    'available' => products::where('stock', '>', 5)->count(),
+                    'low_stock' => products::where('stock', '>', 0)->where('stock', '<=', 5)->count(),
+                    'out_of_stock' => products::where('stock', '=', 0)->count(),
                 ],
                 'message' => 'Lấy thống kê thành công',
             ]);
