@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductsController;
 use App\Http\Controllers\API\InvoicesController;
-
+use App\Http\Controllers\API\invoicesController as APIInvoicesController;
+use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\EmployeesController;
 
 // ========== ROUTE CHÍNH ==========
 Route::get('/', function () {
@@ -36,14 +38,20 @@ Route::prefix('products')->group(function () {
     Route::delete('/{id}', [ProductsController::class, 'destroy']);
 });
 
+// API routes cho đơn hàng
+Route::prefix('api')->group(function () {
+    // Đơn hàng
+    Route::get('/orders', [InvoicesController::class, 'index']);
+    Route::get('/orders/stats', [InvoicesController::class, 'stats']);
+    Route::get('/orders/{id}', [InvoicesController::class, 'show']);
+    Route::post('/orders', [InvoicesController::class, 'store']);
+    Route::put('/orders/{id}', [InvoicesController::class, 'update']);
+    Route::put('/orders/{id}/status', [InvoicesController::class, 'updateStatus']);
+    Route::delete('/orders/{id}', [InvoicesController::class, 'destroy']);
 
-// ========== ROUTE ORDERS (INVOICES) ==========
-Route::prefix('orders')->group(function () {
-    Route::get('/', [InvoicesController::class, 'index']);          // Lấy danh sách đơn hàng
-    Route::get('/stats', [InvoicesController::class, 'stats']);     // Lấy thống kê
-    Route::get('/{id}', [InvoicesController::class, 'show']);       // Lấy chi tiết 1 đơn hàng
-    Route::post('/', [InvoicesController::class, 'store']);         // Tạo đơn hàng mới
-    Route::put('/{id}', [InvoicesController::class, 'update']);     // Cập nhật đơn hàng
-    Route::delete('/{id}', [InvoicesController::class, 'destroy']); // Xóa đơn hàng
-    Route::put('/{id}/status', [InvoicesController::class, 'updateStatus']); // Cập nhật trạng thái
+    // Khách hàng
+    Route::get('/customers', [CustomersController::class, 'index']);
+
+    // Nhân viên
+    Route::get('/employees', [EmployeesController::class, 'index']);
 });
