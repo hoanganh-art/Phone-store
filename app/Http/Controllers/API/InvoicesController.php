@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Invoices;
-use App\Models\Customer;
+use App\Models\invoices;
+use App\Models\customers;
+use App\Models\employees;
 use App\Models\invoice_details;
-use App\Models\InvoicesItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -21,8 +21,8 @@ class InvoicesController extends Controller
     {
         try {
             // Build query
-            $query = Invoices::with(['customer', 'employee', 'items.product'])
-                ->InvoicesBy('created_at', 'desc');
+            $query = invoices::with(['customer', 'employee', 'invoiceDetails'])
+                ->orderBy('created_at', 'desc');
 
             // Áp dụng filters
             if ($request->has('status') && $request->status) {
@@ -119,7 +119,7 @@ class InvoicesController extends Controller
     public function show($id)
     {
         try {
-            $Invoices = Invoices::with(['customer', 'employee', 'items.product'])
+            $Invoices = invoices::with(['customer', 'employee', 'invoiceDetails'])
                 ->find($id);
 
             if (!$Invoices) {

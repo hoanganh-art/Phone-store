@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductsController;
 use App\Http\Controllers\API\InvoicesController;
-use App\Http\Controllers\API\invoicesController as APIInvoicesController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\EmployeesController;
 
@@ -38,20 +37,23 @@ Route::prefix('products')->group(function () {
     Route::delete('/{id}', [ProductsController::class, 'destroy']);
 });
 
-// API routes cho đơn hàng
-Route::prefix('api')->group(function () {
-    // Đơn hàng
-    Route::get('/orders', [InvoicesController::class, 'index']);
-    Route::get('/orders/stats', [InvoicesController::class, 'stats']);
-    Route::get('/orders/{id}', [InvoicesController::class, 'show']);
-    Route::post('/orders', [InvoicesController::class, 'store']);
-    Route::put('/orders/{id}', [InvoicesController::class, 'update']);
-    Route::put('/orders/{id}/status', [InvoicesController::class, 'updateStatus']);
-    Route::delete('/orders/{id}', [InvoicesController::class, 'destroy']);
+// ========== ROUTE INVOICES/ORDERS ==========
+Route::prefix('orders')->group(function () {
+    Route::get('/', [InvoicesController::class, 'index']);
+    Route::get('/stats', [InvoicesController::class, 'stats']);
+    Route::get('/{id}', [InvoicesController::class, 'show']);
+    Route::post('/', [InvoicesController::class, 'store']);
+    Route::put('/{id}', [InvoicesController::class, 'update']);
+    Route::put('/{id}/status', [InvoicesController::class, 'updateStatus']);
+    Route::delete('/{id}', [InvoicesController::class, 'destroy']);
+});
 
-    // Khách hàng
-    Route::get('/customers', [CustomersController::class, 'index']);
+// ========== ROUTE CUSTOMERS ==========
+Route::prefix('customers')->group(function () {
+    Route::get('/', [CustomersController::class, 'index']);
+});
 
-    // Nhân viên
-    Route::get('/employees', [EmployeesController::class, 'index']);
+// ========== ROUTE EMPLOYEES ==========
+Route::prefix('employees')->group(function () {
+    Route::get('/', [EmployeesController::class, 'index']);
 });
