@@ -51,12 +51,12 @@ class InvoicesController extends Controller
 
             if ($request->has('search') && $request->search) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('invoice_code', 'like', "%{$search}%")
-                      ->orWhereHas('customer', function($q2) use ($search) {
-                          $q2->where('name', 'like', "%{$search}%")
-                             ->orWhere('phone', 'like', "%{$search}%");
-                      });
+                        ->orWhereHas('customer', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%{$search}%")
+                                ->orWhere('phone', 'like', "%{$search}%");
+                        });
                 });
             }
 
@@ -74,7 +74,6 @@ class InvoicesController extends Controller
                 'from' => $Invoicess->firstItem(),
                 'to' => $Invoicess->lastItem()
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -91,19 +90,16 @@ class InvoicesController extends Controller
     {
         try {
             $stats = [
-                'total' => invoices::count(),
-                'pending' => invoices::where('status', 'pending')->count(),
-                'processing' => invoices::where('status', 'processing')->count(),
-                'shipping' => invoices::where('status', 'shipping')->count(),
-                'completed' => invoices::where('status', 'completed')->count(),
-                'cancelled' => invoices::where('status', 'cancelled')->count(),
+                'total' => Invoices::count(),
+                'pending' => Invoices::where('status', 'pending')->count(),
+                'paid' => Invoices::where('status', 'paid')->count(),
+                'unpaid' => Invoices::where('status', 'unpaid')->count(),
             ];
 
             return response()->json([
                 'success' => true,
                 'data' => $stats
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -133,7 +129,6 @@ class InvoicesController extends Controller
                 'success' => true,
                 'data' => $Invoices
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -153,11 +148,12 @@ class InvoicesController extends Controller
             $validator = Validator::make($request->all(), [
                 'customer_id' => 'required|exists:customers,id',
                 'employee_id' => 'nullable|exists:employees,id',
-                'payment_method' => 'required|in:cash,credit_card,bank_transfer,cod,momo,zalopay',
-                'items' => 'required|array|min:1',
-                'items.*.product_id' => 'required|exists:products,id',
-                'items.*.quantity' => 'required|integer|min:1',
-                'items.*.price' => 'required|numeric|min:0',
+                'invoice_date' => 'required|date',
+                'subtotal' => 'required|numeric',
+                'discount' => 'nullable|numeric',
+                'total_amount' => 'required|numeric',
+                'payment_method' => 'required|in:cash,credit_card,bank_transfer',
+                'status' => 'required|in:paid,unpaid,pending', // ⬅️ SỬA Ở ĐÂY
             ]);
 
             if ($validator->fails()) {
@@ -205,7 +201,6 @@ class InvoicesController extends Controller
                 'message' => 'Tạo đơn hàng thành công',
                 'data' => $Invoices->load(['customer', 'items.product'])
             ], 201);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -235,7 +230,7 @@ class InvoicesController extends Controller
                 'customer_id' => 'exists:customers,id',
                 'employee_id' => 'nullable|exists:employees,id',
                 'payment_method' => 'in:cash,credit_card,bank_transfer,cod,momo,zalopay',
-                'status' => 'in:pending,processing,shipping,completed,cancelled',
+                'status' => 'required|in:paid,unpaid,pending',
             ]);
 
             if ($validator->fails()) {
@@ -247,8 +242,11 @@ class InvoicesController extends Controller
             }
 
             $Invoices->update($request->only([
-                'customer_id', 'employee_id', 'payment_method',
-                'status', 'notes'
+                'customer_id',
+                'employee_id',
+                'payment_method',
+                'status',
+                'notes'
             ]));
 
             return response()->json([
@@ -256,7 +254,6 @@ class InvoicesController extends Controller
                 'message' => 'Cập nhật đơn hàng thành công',
                 'data' => $Invoices->load(['customer', 'items.product'])
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -313,7 +310,6 @@ class InvoicesController extends Controller
                 'message' => 'Cập nhật trạng thái thành công',
                 'data' => $Invoices
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -360,7 +356,6 @@ class InvoicesController extends Controller
                 'success' => true,
                 'message' => 'Xóa đơn hàng thành công'
             ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([

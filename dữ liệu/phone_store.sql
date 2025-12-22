@@ -1,19 +1,24 @@
+-- Xóa database cũ nếu có
+DROP DATABASE IF EXISTS phone_store;
 CREATE DATABASE phone_store;
-use phone_store;
--- 1. Bảng brands
+USE phone_store;
+
+-- 1. Bảng brands (tương ứng với migration 2025_12_02_040905_create_brands_table.php)
 CREATE TABLE brands (
-    brand_id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     brand_name VARCHAR(50) NOT NULL,
     country VARCHAR(50),
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL
 );
 
--- 2. Bảng products
+-- 2. Bảng products (tương ứng với migration 2025_12_02_041332_create_products_table.php)
 CREATE TABLE products (
-    product_id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     product_name VARCHAR(100) NOT NULL,
-    brand_id INT NOT NULL,
+    sku VARCHAR(50) UNIQUE,
+    brand_id BIGINT NOT NULL,
     category VARCHAR(50),
     ram VARCHAR(20),
     storage VARCHAR(20),
@@ -21,96 +26,117 @@ CREATE TABLE products (
     cost_price DECIMAL(12,2) NOT NULL DEFAULT 0,
     stock INT DEFAULT 0,
     status ENUM('Available', 'Out of Stock', 'Discontinued') DEFAULT 'Available',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (brand_id) REFERENCES brands(brand_id) ON DELETE CASCADE
+    description TEXT,
+    image VARCHAR(255),
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (brand_id) REFERENCES brands(id) ON DELETE CASCADE
 );
 
--- 3. Bảng customers
+-- 3. Bảng customers (tương ứng với migration 2025_12_03_033836_create_customers_table.php)
 CREATE TABLE customers (
-    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     full_name VARCHAR(100) NOT NULL,
-    phone VARCHAR(15),
-    email VARCHAR(100),
-    address TEXT,
-    membership ENUM('Standard', 'Silver', 'Gold', 'Platinum') DEFAULT 'Standard',
+    phone VARCHAR(15) UNIQUE,
+    date_of_birth DATE,
+    email VARCHAR(100) UNIQUE,
+    gender ENUM('Nam', 'Nữ', 'Khác'),
+    address VARCHAR(255),
+    membership ENUM('Đồng', 'Bạc', 'Vàng', 'VIP') DEFAULT 'Đồng',
     points INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    description TEXT,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL
 );
 
--- 4. Bảng employees
+-- 4. Bảng employees (tương ứng với migration 2025_12_05_014850_create_employees_table.php)
 CREATE TABLE employees (
-    employee_id INT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50),
     password VARCHAR(255) NOT NULL,
-    full_name VARCHAR(100) NOT NULL,
-    role ENUM('Admin', 'Manager', 'Sales', 'Warehouse') NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    avartar VARCHAR(255),
     phone VARCHAR(15),
-    salary DECIMAL(12,2) DEFAULT 0,
-    hire_date DATE,
-    status ENUM('Active', 'Inactive') DEFAULT 'Active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role ENUM('admin', 'employee') NOT NULL,
+    Position ENUM('staff','Sell','Warehouse employee','Accountant') NOT NULL,
+    salary DECIMAL(12,2) NOT NULL DEFAULT 0,
+    hire_date DATE NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    status ENUM('active', 'inactive', 'take a break') NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    UNIQUE KEY employees_username_unique (username)
 );
 
--- 5. Bảng invoices
-CREATE TABLE invoices (
-    invoice_id VARCHAR(20) PRIMARY KEY,
-    customer_id INT,
-    employee_id INT NOT NULL,
-    invoice_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    subtotal DECIMAL(12,2) DEFAULT 0,
-    discount DECIMAL(12,2) DEFAULT 0,
-    total_amount DECIMAL(12,2) DEFAULT 0,
-    payment_method ENUM('Cash', 'Credit Card', 'Bank Transfer', 'E-Wallet') DEFAULT 'Cash',
-    status ENUM('Pending', 'Paid', 'Cancelled', 'Refunded') DEFAULT 'Pending',
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id) ON DELETE SET NULL,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE RESTRICT
-);
-
--- 6. Bảng invoice_details
-CREATE TABLE invoice_details (
-    detail_id INT PRIMARY KEY AUTO_INCREMENT,
-    invoice_id VARCHAR(20) NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
-    unit_price DECIMAL(12,2) NOT NULL,
-    amount DECIMAL(12,2) NOT NULL DEFAULT 0,
-    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
-);
-
--- 7. Bảng suppliers
+-- 5. Bảng suppliers (tương ứng với migration 2025_12_05_022851_create_suppliers_table.php)
 CREATE TABLE suppliers (
-    supplier_id INT PRIMARY KEY AUTO_INCREMENT,
-    supplier_name VARCHAR(100) NOT NULL,
-    contact_person VARCHAR(100),
-    phone VARCHAR(15),
-    email VARCHAR(100),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    supplier_name VARCHAR(255) NOT NULL,
+    contact_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    address TEXT NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL
 );
 
--- 8. Bảng imports
+-- 6. Bảng invoices (tương ứng với migration 2025_12_05_020647_create_invoices_table.php)
+CREATE TABLE invoices (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    customer_id BIGINT NOT NULL,
+    employee_id BIGINT NOT NULL,
+    invoice_date DATE NOT NULL,
+    subtotal DECIMAL(12,2) NOT NULL,
+    discount DECIMAL(12,2) NOT NULL,
+    total_amount DECIMAL(12,2) NOT NULL,
+    payment_method ENUM('cash', 'credit_card', 'bank_transfer') NOT NULL,
+    status ENUM('paid', 'unpaid', 'pending') NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
+);
+
+-- 7. Bảng invoice_details (tương ứng với migration 2025_12_05_022835_create_invoice_details_table.php)
+CREATE TABLE invoice_details (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    invoice_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(12,2) NOT NULL,
+    amount DECIMAL(12,2) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- 8. Bảng imports (tương ứng với migration 2025_12_05_022902_create_imports_table.php)
 CREATE TABLE imports (
-    import_id VARCHAR(20) PRIMARY KEY,
-    supplier_id INT NOT NULL,
-    employee_id INT NOT NULL,
-    import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    total_cost DECIMAL(12,2) DEFAULT 0,
-    note TEXT,
-    FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id) ON DELETE RESTRICT,
-    FOREIGN KEY (employee_id) REFERENCES employees(employee_id) ON DELETE RESTRICT
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    supplier_id BIGINT NOT NULL,
+    employee_id BIGINT NOT NULL,
+    import_date DATE NOT NULL,
+    total_amount DECIMAL(12,2) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
--- 9. Bảng import_details
+-- 9. Bảng import_details (tương ứng với migration đã sửa)
 CREATE TABLE import_details (
-    import_detail_id INT PRIMARY KEY AUTO_INCREMENT,
-    import_id VARCHAR(20) NOT NULL,
-    product_id INT NOT NULL,
-    quantity INT NOT NULL DEFAULT 1,
-    cost_price DECIMAL(12,2) NOT NULL,
-    amount DECIMAL(12,2) NOT NULL DEFAULT 0,
-    FOREIGN KEY (import_id) REFERENCES imports(import_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    import_id BIGINT NOT NULL,
+    product_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    cost_price DECIMAL(12,2) NOT NULL,  -- Đã sửa từ const_price
+    amount DECIMAL(12,2) NOT NULL,
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+    FOREIGN KEY (import_id) REFERENCES imports(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- Tạo indexes để tối ưu hiệu suất
@@ -118,7 +144,6 @@ CREATE INDEX idx_products_brand ON products(brand_id);
 CREATE INDEX idx_products_status ON products(status);
 CREATE INDEX idx_invoices_customer ON invoices(customer_id);
 CREATE INDEX idx_invoices_employee ON invoices(employee_id);
-CREATE INDEX idx_invoices_date ON invoices(invoice_date);
 CREATE INDEX idx_invoice_details_invoice ON invoice_details(invoice_id);
 CREATE INDEX idx_invoice_details_product ON invoice_details(product_id);
 CREATE INDEX idx_imports_supplier ON imports(supplier_id);
@@ -126,67 +151,51 @@ CREATE INDEX idx_imports_employee ON imports(employee_id);
 CREATE INDEX idx_import_details_import ON import_details(import_id);
 CREATE INDEX idx_import_details_product ON import_details(product_id);
 CREATE INDEX idx_customers_email ON customers(email);
+CREATE INDEX idx_customers_phone ON customers(phone);
 CREATE INDEX idx_employees_username ON employees(username);
 
+-- Thêm dữ liệu mẫu (đã điều chỉnh phù hợp với migration)
+INSERT INTO brands (brand_name, country, description, created_at, updated_at) VALUES
+('Apple', 'USA', 'Premium smartphone manufacturer', NOW(), NOW()),
+('Samsung', 'South Korea', 'Leading electronics company', NOW(), NOW()),
+('Xiaomi', 'China', 'Affordable tech innovator', NOW(), NOW()),
+('Oppo', 'China', 'Camera-focused smartphones', NOW(), NOW()),
+('Vivo', 'China', 'Innovation-driven brand', NOW(), NOW());
 
---Truy vấn dữ liệu
+INSERT INTO products (product_name, sku, brand_id, category, ram, storage, price, cost_price, stock, status, created_at, updated_at) VALUES
+('iPhone 15 Pro', 'IP15P256', 1, 'Flagship', '8GB', '256GB', 999.99, 650.00, 50, 'Available', NOW(), NOW()),
+('iPhone 15', 'IP15128', 1, 'Flagship', '6GB', '128GB', 799.99, 520.00, 45, 'Available', NOW(), NOW()),
+('Galaxy S24 Ultra', 'GS24U512', 2, 'Flagship', '12GB', '512GB', 1299.99, 850.00, 30, 'Available', NOW(), NOW()),
+('Galaxy A54', 'GA54256', 2, 'Mid-range', '8GB', '256GB', 449.99, 280.00, 60, 'Available', NOW(), NOW()),
+('Xiaomi 14', 'XM14512', 3, 'Flagship', '12GB', '512GB', 699.99, 420.00, 40, 'Available', NOW(), NOW());
 
--- Nếu muốn xóa dữ liệu cũ trong import_details thì dùng TRUNCATE thay vì DROP TABLE
-TRUNCATE TABLE import_details;
+INSERT INTO customers (full_name, phone, date_of_birth, email, gender, address, membership, points, created_at, updated_at) VALUES
+('Nguyễn Văn A', '0901234567', '1990-01-01', 'nguyenvana@email.com', 'Nam', '123 Đường Lê Lợi, TP.HCM', 'Vàng', 500, NOW(), NOW()),
+('Trần Thị B', '0912345678', '1992-05-15', 'tranthib@email.com', 'Nữ', '456 Đường Nguyễn Huệ, TP.HCM', 'Bạc', 300, NOW(), NOW()),
+('Phạm Văn C', '0923456789', '1988-11-20', 'phamvanc@email.com', 'Nam', '789 Đường Trần Hưng Đạo, Hà Nội', 'Đồng', 100, NOW(), NOW());
 
-use phone_store;
--- Tạo dữ liệu products mẫu
-INSERT INTO brands (brand_name, country, description) VALUES
-('Apple', 'USA', 'Premium smartphone manufacturer'),
-('Samsung', 'South Korea', 'Leading electronics company'),
-('Xiaomi', 'China', 'Affordable tech innovator'),
-('Oppo', 'China', 'Camera-focused smartphones'),
-('Vivo', 'China', 'Innovation-driven brand');
+INSERT INTO employees (username, password, full_name, avartar, phone, role, Position, salary, hire_date, email, status, created_at, updated_at) VALUES
+('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Văn Admin', NULL, '0900000001', 'admin', 'staff', 15000000.00, '2023-01-01', 'admin@store.com', 'active', NOW(), NOW()),
+('sales1', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Thị Sales', NULL, '0900000002', 'employee', 'Sell', 8000000.00, '2023-03-01', 'sales@store.com', 'active', NOW(), NOW());
 
-use phone_store;
-INSERT INTO products (product_name, brand_id, category, ram, storage, price, cost_price, stock, status) VALUES
-('iPhone 15 Pro', 1, 'Flagship', '8GB', '256GB', 999.99, 650.00, 50, 'Available'),
-('iPhone 15', 1, 'Flagship', '6GB', '128GB', 799.99, 520.00, 45, 'Available'),
-('Galaxy S24 Ultra', 2, 'Flagship', '12GB', '512GB', 1299.99, 850.00, 30, 'Available'),
-('Galaxy A54', 2, 'Mid-range', '8GB', '256GB', 449.99, 280.00, 60, 'Available'),
-('Xiaomi 14', 3, 'Flagship', '12GB', '512GB', 699.99, 420.00, 40, 'Available'),
-('Redmi Note 13', 3, 'Budget', '4GB', '128GB', 199.99, 110.00, 100, 'Available'),
-('Oppo Find X6', 4, 'Flagship', '12GB', '256GB', 899.99, 550.00, 25, 'Available'),
-('Oppo A78', 4, 'Budget', '6GB', '128GB', 249.99, 140.00, 80, 'Available'),
-('Vivo X90', 5, 'Flagship', '12GB', '512GB', 799.99, 480.00, 35, 'Available'),
-('Vivo Y36', 5, 'Budget', '4GB', '128GB', 179.99, 95.00, 120, 'Available');
+INSERT INTO invoices (customer_id, employee_id, invoice_date, subtotal, discount, total_amount, payment_method, status, created_at, updated_at) VALUES
+(1, 2, '2024-06-01', 1799.98, 100.00, 1699.98, 'cash', 'paid', NOW(), NOW()),
+(2, 2, '2024-06-02', 449.99, 0.00, 449.99, 'credit_card', 'paid', NOW(), NOW());
 
+INSERT INTO invoice_details (invoice_id, product_id, quantity, unit_price, amount, created_at, updated_at) VALUES
+(1, 1, 1, 999.99, 999.99, NOW(), NOW()),
+(1, 2, 1, 799.99, 799.99, NOW(), NOW()),
+(2, 4, 1, 449.99, 449.99, NOW(), NOW());
 
---Tạo dữ liệu mẫu Đơn hàng khách mua (invoices) và Chi tiết đơn hàng (invoice_details)
--- Tạo dữ liệu mẫu employees
-INSERT INTO employees (username, password, full_name, role, phone, salary, hire_date, status) VALUES
-('admin', 'admin123', 'Nguyễn Văn Admin', 'Admin', '0900000001', 15000000.00, '2023-01-01', 'Active'),
-('manager1', 'manager123', 'Trần Thị Manager', 'Manager', '0900000002', 12000000.00, '2023-02-01', 'Active'),
-('sales1', 'sales123', 'Lê Văn Sales', 'Sales', '0900000003', 8000000.00, '2023-03-01', 'Active');
-
--- Tạo dữ liệu mẫu customers
-INSERT INTO customers (full_name, phone, email, address, membership, points) VALUES
-('Nguyễn Văn A', '0901234567', 'nguyenvana@email.com', '123 Đường Lê Lợi, TP.HCM', 'Gold', 500),
-('Trần Thị B', '0912345678', 'tranthib@email.com', '456 Đường Nguyễn Huệ, TP.HCM', 'Silver', 300),
-('Phạm Văn C', '0923456789', 'phamvanc@email.com', '789 Đường Trần Hưng Đạo, Hà Nội', 'Standard', 100),
-('Lê Thị D', '0934567890', 'lethid@email.com', '321 Đường Cách Mạng Tháng 8, TP.HCM', 'Platinum', 1000),
-('Hoàng Văn E', '0945678901', 'hoangvane@email.com', '654 Đường Võ Văn Kiệt, TP.HCM', 'Standard', 50);
-
--- Tạo dữ liệu mẫu invoices
-SELECT * FROM invoices;
-
-INSERT INTO invoices (id, customer_id, employee_id, invoice_date, subtotal, discount, total_amount, payment_method, status) VALUES
-('INV001', 1, 1, '2024-01-15 10:30:00', 1999.98, 100.00, 1899.98, 'Credit Card', 'Paid'),
-('INV002', 2, 2, '2024-01-16 14:20:00', 699.99, 50.00, 649.99, 'Cash', 'Paid'),
-('INV003', 3, 1, '2024-01-17 09:15:00', 1299.99, 0.00, 1299.99, 'Bank Transfer', 'Paid'),
-('INV004', 4, 3, '2024-01-18 16:45:00', 449.99, 0.00, 449.99, 'E-Wallet', 'Paid'),
-('INV005', 5, 2, '2024-01-19 11:00:00', 999.97, 150.00, 849.97, 'Credit Card', 'Pending');
--- Tạo dữ liệu mẫu invoice_details
-INSERT INTO invoice_details (id, product_id, quantity, unit_price, amount) VALUES
-('INV001', 1, 1, 999.99, 999.99),
-('INV001', 3, 1, 999.99, 999.99),
-('INV002', 5, 1, 699.99, 699.99),
-('INV003', 3, 1, 1299.99, 1299.99),
-('INV004', 4, 1, 449.99, 449.99),
-('INV005', 2, 1, 799.99, 799.99),
-('INV005', 6, 1, 199.99, 199.99);
+-- Kiểm tra dữ liệu
+SELECT 'brands' as table_name, COUNT(*) as count FROM brands
+UNION ALL
+SELECT 'products', COUNT(*) FROM products
+UNION ALL
+SELECT 'customers', COUNT(*) FROM customers
+UNION ALL
+SELECT 'employees', COUNT(*) FROM employees
+UNION ALL
+SELECT 'invoices', COUNT(*) FROM invoices
+UNION ALL
+SELECT 'invoice_details', COUNT(*) FROM invoice_details;

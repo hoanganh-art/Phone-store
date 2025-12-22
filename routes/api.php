@@ -38,13 +38,13 @@ Route::prefix('products')->group(function () {
 });
 
 // ========== ROUTE INVOICES/ORDERS ==========
-Route::prefix('orders')->group(function () {
+Route::prefix('invoices')->group(function () {
     Route::get('/', [InvoicesController::class, 'index']);
     Route::get('/stats', [InvoicesController::class, 'stats']);
     Route::get('/{id}', [InvoicesController::class, 'show']);
     Route::post('/', [InvoicesController::class, 'store']);
-    Route::put('/{id}', [InvoicesController::class, 'update']);
-    Route::put('/{id}/status', [InvoicesController::class, 'updateStatus']);
+    Route::match(['put', 'patch'], '/{id}', [InvoicesController::class, 'update']);
+    Route::match(['put', 'patch'], '/{id}/status', [InvoicesController::class, 'updateStatus']);
     Route::delete('/{id}', [InvoicesController::class, 'destroy']);
 });
 
