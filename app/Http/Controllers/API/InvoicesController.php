@@ -229,8 +229,12 @@ class InvoicesController extends Controller
             $validator = Validator::make($request->all(), [
                 'customer_id' => 'exists:customers,id',
                 'employee_id' => 'nullable|exists:employees,id',
-                'payment_method' => 'in:cash,credit_card,bank_transfer,cod,momo,zalopay',
+                'payment_method' => 'in:cash,credit_card,bank_transfer', // ⬅️ CHỈ 3 GIÁ TRỊ
                 'status' => 'required|in:paid,unpaid,pending',
+                'invoice_date' => 'date',
+                'subtotal' => 'numeric',
+                'discount' => 'numeric',
+                'total_amount' => 'numeric',
             ]);
 
             if ($validator->fails()) {
@@ -279,7 +283,7 @@ class InvoicesController extends Controller
             }
 
             $validator = Validator::make($request->all(), [
-                'status' => 'required|in:pending,processing,shipping,completed,cancelled',
+                'status' => 'required|in:paid,unpaid,pending',
                 'note' => 'nullable|string'
             ]);
 

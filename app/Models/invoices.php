@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class invoices extends Model
 {
-    //
     protected $table = "invoices";
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'customer_id',
         'employee_id',
@@ -18,6 +18,8 @@ class invoices extends Model
         'total_amount',
         'payment_method',
         'status',
+        'invoice_code',  // Thêm vào
+        'notes',         // Thêm vào
     ];
 
     protected $casts = [
@@ -27,20 +29,23 @@ class invoices extends Model
         'total_amount' => 'decimal:2'
     ];
 
-    // Quan hệ: Một hóa đơn thuộc về một khách hàng
     public function customer()
     {
         return $this->belongsTo(customers::class, 'customer_id');
     }
 
-    // Quan hệ: Một hóa đơn thuộc về một nhân viên
     public function employee()
     {
         return $this->belongsTo(employees::class, 'employee_id');
     }
 
-      // Quan hệ: Một hóa đơn có nhiều chi tiết hóa đơn
     public function invoiceDetails()
+    {
+        return $this->hasMany(invoice_details::class, 'invoice_id');
+    }
+
+    // Quan hệ cho items (để tương thích với frontend)
+    public function items()
     {
         return $this->hasMany(invoice_details::class, 'invoice_id');
     }
