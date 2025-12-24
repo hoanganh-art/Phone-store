@@ -229,7 +229,7 @@ class InvoicesController extends Controller
             $validator = Validator::make($request->all(), [
                 'customer_id' => 'exists:customers,id',
                 'employee_id' => 'nullable|exists:employees,id',
-                'payment_method' => 'in:cash,credit_card,bank_transfer', // ⬅️ CHỈ 3 GIÁ TRỊ
+                'payment_method' => 'in:cash,credit_card,bank_transfer',
                 'status' => 'required|in:paid,unpaid,pending',
                 'invoice_date' => 'date',
                 'subtotal' => 'numeric',
@@ -272,42 +272,37 @@ class InvoicesController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:paid,unpaid,pending',
+            // 'note' => 'nullable|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $Invoices = Invoices::find($id);
+
+        if (!$Invoices) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy hóa đơn'
+            ], 404);
+        }
+
+        DB::beginTransaction();
         try {
-            $Invoices = Invoices::find($id);
-
-            if (!$Invoices) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy đơn hàng'
-                ], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'status' => 'required|in:paid,unpaid,pending',
-                'note' => 'nullable|string'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Lưu lịch sử thay đổi trạng thái
-            $Invoices->status_history()->create([
-                'old_status' => $Invoices->status,
-                'new_status' => $request->status,
-                'note' => $request->note
-                // 'changed_by' => auth()->user()?->id // Nếu có authentication
-            ]);
-
-            // Cập nhật trạng thái
             $Invoices->update([
                 'status' => $request->status,
-                'notes' => $request->note ? $Invoices->notes . "\n[Status Change]: " . $request->note : $Invoices->notes
+                // 'notes' => $request->note
+                //     ? ($Invoices->notes ?? '') . "\n[Status Change]: " . $request->note
+                //     : $Invoices->notes
             ]);
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -315,13 +310,14 @@ class InvoicesController extends Controller
                 'data' => $Invoices
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi cập nhật trạng thái',
-                'error' => $e->getMessage()
+                'message' => $e->getMessage()
             ], 500);
         }
     }
+
 
     /**
      * Xóa đơn hàng
