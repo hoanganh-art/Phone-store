@@ -153,7 +153,7 @@ class InvoicesController extends Controller
                 'discount' => 'nullable|numeric',
                 'total_amount' => 'required|numeric',
                 'payment_method' => 'required|in:cash,credit_card,bank_transfer',
-                'status' => 'required|in:paid,unpaid,pending', // ⬅️ SỬA Ở ĐÂY
+                'status' => 'required|in:paid,unpaid,pending,shipping,completed,cancelled,processing', // ⬅️ SỬA Ở ĐÂY
             ]);
 
             if ($validator->fails()) {
@@ -230,7 +230,7 @@ class InvoicesController extends Controller
                 'customer_id' => 'exists:customers,id',
                 'employee_id' => 'nullable|exists:employees,id',
                 'payment_method' => 'in:cash,credit_card,bank_transfer',
-                'status' => 'required|in:paid,unpaid,pending',
+                'status' => 'required|in:paid,unpaid,pending,shipping,completed,cancelled,processing',
                 'invoice_date' => 'date',
                 'subtotal' => 'numeric',
                 'discount' => 'numeric',
@@ -273,7 +273,7 @@ class InvoicesController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:paid,unpaid,pending',
+            'status' => 'required|in:paid,unpaid,pending,shipping,completed,cancelled,processing',
             // 'note' => 'nullable|string'
         ]);
 

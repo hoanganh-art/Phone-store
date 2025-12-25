@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('discount', 12, 2); //Tiền khuyến mãi
             $table->decimal('total_amount', 12, 2); //Tổng tiền sau khi khuyến mãi
             $table->enum('payment_method', ['cash', 'credit_card', 'bank_transfer']); //Phương thức thanh toán
-            $table->enum('status', ['paid', 'unpaid', 'pending']); //Trạng thái hóa đơn
+            $table->enum('status', ['paid', 'unpaid', 'pending','shipping','completed','cancelled','processing']); //Trạng thái hóa đơn
             $table->timestamps();
         });
     }
