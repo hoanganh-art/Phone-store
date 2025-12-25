@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\ProductsController;
 use App\Http\Controllers\API\InvoicesController;
-use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\API\CustomersController;
 use App\Http\Controllers\EmployeesController;
 
 // ========== ROUTE CHÍNH ==========
@@ -49,11 +49,22 @@ Route::prefix('invoices')->group(function () {
 });
 
 // ========== ROUTE CUSTOMERS ==========
-Route::prefix('customers')->group(function () {
-    Route::get('/', [CustomersController::class, 'index']);
-});
+// Route::prefix('customers')->group(function () {
+//     Route::get('/', [CustomersController::class, 'index']);
+// });
 
 // ========== ROUTE EMPLOYEES ==========
 Route::prefix('employees')->group(function () {
     Route::get('/', [EmployeesController::class, 'index']);
+});
+
+
+// ========== ROUTE CUSTOMERS ==========
+Route::prefix('customers')->group(function () {
+    Route::get('/', [CustomersController::class, 'index']);
+    Route::get('/stats', [CustomersController::class, 'stats']);
+    Route::post('/', [CustomersController::class, 'store']);
+    Route::get('/{id}', [CustomersController::class, 'show']);
+    Route::put('/{id}', [CustomersController::class, 'update']);
+    Route::delete('/{id}', [CustomersController::class, 'destroy']);
 });
