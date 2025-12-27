@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\API\ProductsController;
-use App\Http\Controllers\API\InvoicesController;
 use App\Http\Controllers\API\CustomersController;
-use App\Http\Controllers\EmployeesController;
+use App\Http\Controllers\API\EmployeesController;
+use App\Http\Controllers\API\InvoicesController;
+use App\Http\Controllers\API\ProductsController;
+use Illuminate\Support\Facades\Route;
 
 // ========== ROUTE CHÍNH ==========
 Route::get('/', function () {
@@ -18,9 +18,9 @@ Route::get('/', function () {
             'stats' => '/api/products/stats',
             'filter_options' => '/api/products/filter-options',
             'brands' => '/api/products/brands',
-            'categories' => '/api/products/categories'
+            'categories' => '/api/products/categories',
         ],
-        'timestamp' => now()->toDateTimeString()
+        'timestamp' => now()->toDateTimeString(),
     ]);
 });
 
@@ -54,10 +54,9 @@ Route::prefix('invoices')->group(function () {
 // });
 
 // ========== ROUTE EMPLOYEES ==========
-Route::prefix('employees')->group(function () {
-    Route::get('/', [EmployeesController::class, 'index']);
-});
-
+// Route::prefix('employees')->group(function () {
+//     Route::get('/', [EmployeesController::class, 'index']);
+// });
 
 // ========== ROUTE CUSTOMERS ==========
 Route::prefix('customers')->group(function () {
@@ -67,4 +66,15 @@ Route::prefix('customers')->group(function () {
     Route::get('/{id}', [CustomersController::class, 'show']);
     Route::put('/{id}', [CustomersController::class, 'update']);
     Route::delete('/{id}', [CustomersController::class, 'destroy']);
+});
+// ========== ROUTE EMPLOYEES ==========
+Route::prefix('employees')->group(function () {
+    Route::get('/', [EmployeesController::class, 'index']);
+    Route::post('/', [EmployeesController::class, 'store']);
+    Route::post('/login', [EmployeesController::class, 'login']);
+    Route::get('/statistics', [EmployeesController::class, 'statistics']);
+    Route::get('/{id}', [EmployeesController::class, 'show']);
+    Route::put('/{id}', [EmployeesController::class, 'update']);
+    Route::delete('/{id}', [EmployeesController::class, 'destroy']);
+    Route::post('/{id}/change-password', [EmployeesController::class, 'changePassword']);
 });

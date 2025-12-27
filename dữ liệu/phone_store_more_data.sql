@@ -108,3 +108,10 @@ INSERT INTO `invoice_details` (`id`, `invoice_id`, `product_id`, `quantity`, `un
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
 (1, 'System Admin', 'admin@phonestore.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NOW(), NOW()),
 (2, 'Manager User', 'manager@phonestore.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NOW(), NOW());
+-- Thêm tài khoản admin để đăng nhập (mật khẩu: "password")
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+(3, 'Super Admin', 'superadmin@phonestore.com', NOW(), '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', NULL, NOW(), NOW());
+
+-- Thêm nhân viên admin tương ứng
+INSERT INTO `employees` (`id`, `username`, `password`, `full_name`, `avartar`, `phone`, `role`, `Position`, `salary`, `hire_date`, `email`, `status`, `created_at`, `updated_at`) VALUES
+(7, 'admin02', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nguyễn Quản Trị', 'avatar7.jpg', '0907777777', 'admin', 'staff', 30000000.00, '2024-02-15', 'admin02@store.com', 'active', NOW(), NOW());
