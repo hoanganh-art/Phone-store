@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class EmployeesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Hiển thị dữ liệu nhân viên.
      */
     public function index()
     {
