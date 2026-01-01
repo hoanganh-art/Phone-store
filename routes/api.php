@@ -73,11 +73,11 @@ Route::prefix('customers')->group(function () {
 // Thêm vào routes/api.php
 Route::prefix('employees')->group(function () {
     Route::get('/', [EmployeesController::class, 'index']);
+    Route::get('/statistics', [EmployeesController::class, 'statistics']); // Đặt trước /{id}
     Route::post('/', [EmployeesController::class, 'store']);
+    Route::post('/login', [EmployeesController::class, 'login']);
     Route::get('/{id}', [EmployeesController::class, 'show']);
     Route::put('/{id}', [EmployeesController::class, 'update']);
     Route::delete('/{id}', [EmployeesController::class, 'destroy']);
-    Route::post('/login', [EmployeesController::class, 'login']);
     Route::post('/{id}/change-password', [EmployeesController::class, 'changePassword']);
-    Route::get('/statistics', [EmployeesController::class, 'statistics']); // Đảm bảo route này được định nghĩa
 });

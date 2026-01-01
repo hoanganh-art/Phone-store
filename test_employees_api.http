@@ -1,0 +1,104 @@
+### Test Employees API
+
+### 1. GET - Lấy danh sách nhân viên
+GET http://127.0.0.1:8000/api/employees
+Content-Type: application/json
+
+###
+
+### 2. GET - Lấy danh sách nhân viên với phân trang
+GET http://127.0.0.1:8000/api/employees?per_page=5
+Content-Type: application/json
+
+###
+
+### 3. GET - Tìm kiếm nhân viên
+GET http://127.0.0.1:8000/api/employees?search=admin
+Content-Type: application/json
+
+###
+
+### 4. GET - Lọc theo role
+GET http://127.0.0.1:8000/api/employees?role=admin
+Content-Type: application/json
+
+###
+
+### 5. GET - Lọc theo status
+GET http://127.0.0.1:8000/api/employees?status=active
+Content-Type: application/json
+
+###
+
+### 6. GET - Lấy thống kê nhân viên
+GET http://127.0.0.1:8000/api/employees/statistics
+Content-Type: application/json
+
+###
+
+### 7. POST - Tạo nhân viên mới
+POST http://127.0.0.1:8000/api/employees
+Content-Type: application/json
+
+{
+  "username": "test_user",
+  "password": "password123",
+  "full_name": "Nguyễn Văn Test",
+  "avatar": null,
+  "phone": "0123456789",
+  "role": "employee",
+  "position": "staff",
+  "salary": 10000000,
+  "hire_date": "2026-01-01",
+  "email": "test@example.com",
+  "status": "active"
+}
+
+###
+
+### 8. GET - Lấy chi tiết nhân viên (thay {id} bằng ID thực tế)
+GET http://127.0.0.1:8000/api/employees/1
+Content-Type: application/json
+
+###
+
+### 9. PUT - Cập nhật thông tin nhân viên (thay {id} bằng ID thực tế)
+PUT http://127.0.0.1:8000/api/employees/1
+Content-Type: application/json
+
+{
+  "full_name": "Nguyễn Văn Updated",
+  "salary": 12000000,
+  "status": "active"
+}
+
+###
+
+### 10. DELETE - Xóa nhân viên (thay {id} bằng ID thực tế - ID không có liên kết)
+DELETE http://127.0.0.1:8000/api/employees/999
+Content-Type: application/json
+
+###
+
+### 11. POST - Đăng nhập
+POST http://127.0.0.1:8000/api/employees/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+
+### 12. POST - Đổi mật khẩu (thay {id} bằng ID thực tế)
+POST http://127.0.0.1:8000/api/employees/1/change-password
+Content-Type: application/json
+
+{
+  "current_password": "oldpassword",
+  "new_password": "newpassword123",
+  "new_password_confirmation": "newpassword123"
+}
+
+###

@@ -153,7 +153,19 @@ class EmployeesController extends Controller
         }
 
         // Kiểm tra nếu nhân viên có liên quan đến hóa đơn hoặc phiếu nhập
-        if ($employee->invoices()->exists() || $employee->imports()->exists()) {
+        try {
+            $hasInvoices = $employee->invoices()->exists();
+        } catch (\Exception $e) {
+            $hasInvoices = false;
+        }
+
+        try {
+            $hasImports = $employee->imports()->exists();
+        } catch (\Exception $e) {
+            $hasImports = false;
+        }
+
+        if ($hasInvoices || $hasImports) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể xóa nhân viên vì có dữ liệu liên quan',
