@@ -1,4 +1,5 @@
 -- Chèn dữ liệu vào bảng brands
+use phone_store;
 INSERT INTO `brands` (`id`, `brand_name`, `country`, `description`, `created_at`, `updated_at`) VALUES
 (1, 'Apple', 'USA', 'Hãng công nghệ hàng đầu thế giới với các sản phẩm iPhone, iPad, Mac', NOW(), NOW()),
 (2, 'Samsung', 'Hàn Quốc', 'Tập đoàn điện tử đa quốc gia, sản xuất điện thoại Galaxy series', NOW(), NOW()),
