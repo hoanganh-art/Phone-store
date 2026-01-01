@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class employees extends Model
+class Employees extends Model
 {
-    //
+    use HasFactory, SoftDeletes;
+
     protected $table = "employees";
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'username',
         'password',
@@ -19,7 +22,10 @@ class employees extends Model
         'salary',
         'hire_date',
         'email',
-        'status'
+        'status',
+        'avatar',  // Thêm vào
+        'phone',   // Thêm vào
+        'position' // Thêm vào
     ];
 
     protected $hidden = [
@@ -34,12 +40,20 @@ class employees extends Model
     // Quan hệ: Một nhân viên tạo nhiều hóa đơn
     public function invoices(): HasMany
     {
-        return $this->hasMany(invoices::class, 'employee_id');
+        // Kiểm tra xem model Invoices có tồn tại không
+        if (class_exists(invoices::class)) {
+            return $this->hasMany(invoices::class, 'employee_id');
+        }
+        return $this->hasMany(\App\Models\invoices::class, 'employee_id');
     }
 
     // Quan hệ: Một nhân viên tạo nhiều phiếu nhập hàng
     public function imports(): HasMany
     {
-        return $this->hasMany(imports::class, 'employee_id');
+        // Kiểm tra xem model imports có tồn tại không
+        if (class_exists(imports::class)) {
+            return $this->hasMany(imports::class, 'employee_id');
+        }
+        return $this->hasMany(\App\Models\imports::class, 'employee_id');
     }
 }

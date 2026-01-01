@@ -19,6 +19,8 @@ Route::get('/', function () {
             'filter_options' => '/api/products/filter-options',
             'brands' => '/api/products/brands',
             'categories' => '/api/products/categories',
+            'employees' => '/api/employees',
+            'employees_statistics' => '/api/employees/statistics',
         ],
         'timestamp' => now()->toDateTimeString(),
     ]);
@@ -68,13 +70,14 @@ Route::prefix('customers')->group(function () {
     Route::delete('/{id}', [CustomersController::class, 'destroy']);
 });
 // ========== ROUTE EMPLOYEES ==========
+// Thêm vào routes/api.php
 Route::prefix('employees')->group(function () {
     Route::get('/', [EmployeesController::class, 'index']);
     Route::post('/', [EmployeesController::class, 'store']);
-    Route::post('/login', [EmployeesController::class, 'login']);
-    Route::get('/statistics', [EmployeesController::class, 'statistics']);
     Route::get('/{id}', [EmployeesController::class, 'show']);
     Route::put('/{id}', [EmployeesController::class, 'update']);
     Route::delete('/{id}', [EmployeesController::class, 'destroy']);
+    Route::post('/login', [EmployeesController::class, 'login']);
     Route::post('/{id}/change-password', [EmployeesController::class, 'changePassword']);
+    Route::get('/statistics', [EmployeesController::class, 'statistics']); // Đảm bảo route này được định nghĩa
 });
