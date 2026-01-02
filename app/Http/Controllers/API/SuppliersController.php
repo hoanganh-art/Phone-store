@@ -22,17 +22,17 @@ class SuppliersController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Lọc theo loại sản phẩm
-        if ($request->has('category') && $request->category !== '') {
-            $query->whereJsonContains('product_categories', $request->category);
+        // Lọc theo xếp hạng
+        if ($request->has('rating') && $request->rating !== '') {
+            $query->where('rating', '>=', $request->rating);
         }
 
         // Tìm kiếm
         if ($request->has('search') && $request->search !== '') {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('suppliers_name', 'LIKE', "%{$search}%")
-                  ->orWhere('suppliers_code', 'LIKE', "%{$search}%")
+                $q->where('supplier_name', 'LIKE', "%{$search}%")
+                  ->orWhere('supplier_code', 'LIKE', "%{$search}%")
                   ->orWhere('email', 'LIKE', "%{$search}%")
                   ->orWhere('contact_name', 'LIKE', "%{$search}%");
             });
@@ -45,18 +45,18 @@ class SuppliersController extends Controller
 
         // Phân trang
         $perPage = $request->get('per_page', 12);
-        $supplierss = $query->paginate($perPage);
+        $suppliers = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $supplierss->items(),
+            'data' => $suppliers->items(),
             'pagination' => [
-                'total' => $supplierss->total(),
-                'per_page' => $supplierss->perPage(),
-                'current_page' => $supplierss->currentPage(),
-                'last_page' => $supplierss->lastPage(),
-                'from' => $supplierss->firstItem(),
-                'to' => $supplierss->lastItem()
+                'total' => $suppliers->total(),
+                'per_page' => $suppliers->perPage(),
+                'current_page' => $suppliers->currentPage(),
+                'last_page' => $suppliers->lastPage(),
+                'from' => $suppliers->firstItem(),
+                'to' => $suppliers->lastItem()
             ]
         ]);
     }
@@ -67,18 +67,21 @@ class SuppliersController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'suppliers_name' => 'required|string|max:255',
-            'suppliers_code' => 'required|string|max:50|unique:supplierss',
-            'tax_code' => 'nullable|string|max:20',
+            'supplier_code' => 'required|string|max:50|unique:suppliers',
+            'supplier_name' => 'required|string|max:255',
+            'tax_code' => 'nullable|string|max:50',
             'contact_name' => 'required|string|max:255',
-            'contact_phone' => 'required|string|max:15',
-            'phone' => 'required|string|max:15',
+            'representative_name' => 'nullable|string|max:255',
+            'company_phone' => 'required|string|max:15',
+            'representative_phone' => 'nullable|string|max:15',
             'email' => 'required|email|max:255',
             'address' => 'required|string',
-            'website' => 'nullable|url',
-            'product_categories' => 'nullable|array',
+            'website' => 'nullable|url|max:255',
+            'product_types' => 'nullable|array',
+            'rating' => 'nullable|numeric|min:0|max:5',
             'payment_terms' => 'nullable|string',
-            'rating' => 'nullable|numeric|min:1|max:5',
+            'logo_url' => 'nullable|url|max:500',
+            'cooperation_date' => 'nullable|date',
             'status' => 'required|in:active,inactive,pending'
         ]);
 
@@ -90,11 +93,10 @@ class SuppliersController extends Controller
         }
 
         $data = $request->all();
-        $data['join_date'] = now();
 
-        // Chuyển categories thành JSON nếu là array
-        if (isset($data['product_categories']) && is_array($data['product_categories'])) {
-            $data['product_categories'] = json_encode($data['product_categories']);
+        // Chuyển product_types thành JSON nếu là array
+        if (isset($data['product_types']) && is_array($data['product_types'])) {
+            $data['product_types'] = json_encode($data['product_types']);
         }
 
         $suppliers = suppliers::create($data);
@@ -141,18 +143,21 @@ class SuppliersController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'suppliers_name' => 'string|max:255',
-            'suppliers_code' => 'string|max:50|unique:supplierss,suppliers_code,' . $id,
-            'tax_code' => 'nullable|string|max:20',
+            'supplier_code' => 'string|max:50|unique:suppliers,supplier_code,' . $id,
+            'supplier_name' => 'string|max:255',
+            'tax_code' => 'nullable|string|max:50',
             'contact_name' => 'string|max:255',
-            'contact_phone' => 'string|max:15',
-            'phone' => 'string|max:15',
+            'representative_name' => 'nullable|string|max:255',
+            'company_phone' => 'string|max:15',
+            'representative_phone' => 'nullable|string|max:15',
             'email' => 'email|max:255',
             'address' => 'string',
-            'website' => 'nullable|url',
-            'product_categories' => 'nullable|array',
+            'website' => 'nullable|url|max:255',
+            'product_types' => 'nullable|array',
+            'rating' => 'nullable|numeric|min:0|max:5',
             'payment_terms' => 'nullable|string',
-            'rating' => 'nullable|numeric|min:1|max:5',
+            'logo_url' => 'nullable|url|max:500',
+            'cooperation_date' => 'nullable|date',
             'status' => 'in:active,inactive,pending'
         ]);
 
@@ -165,9 +170,9 @@ class SuppliersController extends Controller
 
         $data = $request->all();
 
-        // Chuyển categories thành JSON nếu là array
-        if (isset($data['product_categories']) && is_array($data['product_categories'])) {
-            $data['product_categories'] = json_encode($data['product_categories']);
+        // Chuyển product_types thành JSON nếu là array
+        if (isset($data['product_types']) && is_array($data['product_types'])) {
+            $data['product_types'] = json_encode($data['product_types']);
         }
 
         $suppliers->update($data);
