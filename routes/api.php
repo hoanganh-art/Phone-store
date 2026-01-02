@@ -4,6 +4,7 @@ use App\Http\Controllers\API\CustomersController;
 use App\Http\Controllers\API\EmployeesController;
 use App\Http\Controllers\API\InvoicesController;
 use App\Http\Controllers\API\ProductsController;
+use App\Http\Controllers\API\SuppliersController;
 use Illuminate\Support\Facades\Route;
 
 // ========== ROUTE CHÍNH ==========
@@ -80,4 +81,15 @@ Route::prefix('employees')->group(function () {
     Route::put('/{id}', [EmployeesController::class, 'update']);
     Route::delete('/{id}', [EmployeesController::class, 'destroy']);
     Route::post('/{id}/change-password', [EmployeesController::class, 'changePassword']);
+});
+
+
+// ========== ROUTE SUPPLIERS ==========
+Route::prefix('suppliers')->group(function () {
+    Route::get('/', [SuppliersController::class, 'index']);
+    Route::get('/stats', [SuppliersController::class, 'getStats']);
+    Route::post('/', [SuppliersController::class, 'store']);
+    Route::get('/{id}', [SuppliersController::class, 'show']);
+    Route::put('/{id}', [SuppliersController::class, 'update']);
+    Route::delete('/{id}', [SuppliersController::class, 'destroy']);
 });
