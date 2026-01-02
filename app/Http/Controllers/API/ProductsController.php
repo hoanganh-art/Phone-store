@@ -5,7 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\brands;
 use App\Models\invoice_details;
-use App\Models\Products;
+use App\Models\products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -169,7 +169,7 @@ class ProductsController extends Controller
                 'image' => $imageUrl,
             ]);
 
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $product->load('brand'),
