@@ -46,14 +46,4 @@ class Employees extends Model
         }
         return $this->hasMany(\App\Models\invoices::class, 'employee_id');
     }
-
-    // Quan hệ: Một nhân viên tạo nhiều phiếu nhập hàng
-    public function imports(): HasMany
-    {
-        // Kiểm tra xem model imports có tồn tại không
-        if (class_exists(imports::class)) {
-            return $this->hasMany(imports::class, 'employee_id');
-        }
-        return $this->hasMany(\App\Models\imports::class, 'employee_id');
-    }
 }

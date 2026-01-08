@@ -33,8 +33,4 @@ class suppliers extends Model
         'cooperation_date' => 'date'
     ];
     // Quan hệ: Một nhà cung cấp có nhiều phiếu nhập hàng
-    public function imports()
-    {
-        return $this->hasMany(imports::class, 'supplier_id');
-    }
 }
