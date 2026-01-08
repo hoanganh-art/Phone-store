@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class suppliers extends Model
 {
@@ -32,5 +33,9 @@ class suppliers extends Model
         'rating' => 'decimal:1',
         'cooperation_date' => 'date'
     ];
-    // Quan hệ: Một nhà cung cấp có nhiều phiếu nhập hàng
+
+    public function imports(): HasMany
+    {
+        return $this->hasMany(imports::class, 'supplier_id');
+    }
 }

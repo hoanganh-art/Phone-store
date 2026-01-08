@@ -46,4 +46,9 @@ class Employees extends Model
         }
         return $this->hasMany(\App\Models\invoices::class, 'employee_id');
     }
+
+    public function imports(): HasMany
+    {
+        return $this->hasMany(imports::class, 'employee_id');
+    }
 }
