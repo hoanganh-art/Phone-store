@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone', 15)->unique(); // Số điện thoại khách hàng
             $table->date('date_of_birth')->nullable(); // Ngày sinh khách hàng
             $table->string('email', 100)->unique(); // Email khách hàng
+            $table->string('password'); // Mật khẩu khách hàng
             $table->enum('gender', ['Nam', 'Nữ', 'Khác'])->nullable(); // Giới tính khách hàng
             $table->string('address', 255)->nullable(); // Địa chỉ khách hàng
             $table->enum('membership', ['Đồng', 'Bạc', 'Vàng','VIP'])->default('Đồng'); // Cấp độ thành viên
