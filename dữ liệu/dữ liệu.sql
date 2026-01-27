@@ -6,7 +6,7 @@
 
 -- 1. TẮT KIỂM TRA KHÓA NGOẠI (Để tránh lỗi khi xóa/chèn dữ liệu)
 SET FOREIGN_KEY_CHECKS = 0;
-
+USE phone_store;
 -- ================================================================
 -- 2. BẢNG BRANDS (Thương hiệu)
 -- ================================================================
